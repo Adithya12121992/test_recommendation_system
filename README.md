@@ -35,6 +35,55 @@ Local Git change
 - An Anthropic API key supplied only through `ANTHROPIC_API_KEY`; never commit or
   paste the key into source files.
 
+## Python environment
+
+The local environment uses Python 3.14. Activate it from the project directory:
+
+```bash
+source .venv/bin/activate
+python --version
+python -m pip --version
+```
+
+To recreate the environment, run `python3.14 -m venv .venv` before activating it.
+Run `deactivate` to leave the environment. Install the catalog tooling and its PyYAML dependency with
+`python -m pip install -e .`. Networking application tests themselves require
+only the standard library.
+
+## Current milestone and catalog
+
+The product corpus contains **100 evolution commits** and **124 test cases**.
+This project recommends from the **20 primary component suites** listed in
+[test_catalog.yaml](test_catalog.yaml); together they run 110 test cases. The
+remaining 14 baseline/integration cases remain part of full-product regression
+checks. This catalog is separate from the product repository and pins its frozen
+`cc5afe3` snapshot using a full SHA.
+
+Each entry includes a stable ID, suite name, description, unittest class target,
+test file, owned source paths, and the suite's introduction SHA. Ownership and
+snapshot descriptions are catalog metadata, not coverage or historical
+evidence. Before a historical recommendation, the suite and its evidence must
+exist at the target parent; introduction SHAs flag unavailable suites.
+Runtime estimates are unset until measured.
+
+Validate and run all 20 suites independently from a temporary export of the
+pinned product snapshot:
+
+```bash
+python -m test_recommendation.catalog --product-repo ../test_recommendation_product --run --report artifacts/catalog_validation.json
+```
+
+Omit `--run` for static validation. The optional report records per-suite case
+counts, pass/fail results, and elapsed process durations; these timings are
+local observations rather than calibrated runtime estimates. The validator
+reads Git objects and never changes the product worktree.
+
+Run catalog validation checks:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
 ## Local configuration
 
 Create an untracked `.env` file from `.env.example`:
@@ -54,7 +103,7 @@ Do not commit `.env`, API keys, passwords, or database dumps containing secrets.
 
 ## Demo data model
 
-The first version uses a fixed YAML catalog of 50 fictional valid test suites,
+The first version uses a fixed YAML catalog of 20 fictional valid test suites,
 such as `RelayMesh::RouteRecovery`. A full database-backed test catalog is not
 required for the demo.
 
@@ -72,12 +121,12 @@ issue links, and expected tests must all describe the same fictional subsystem.
 
 ## Recommended build order
 
-1. Create the fixed 50-suite catalog and MySQL schema.
+1. Create the fixed 20-suite catalog and MySQL schema.
 2. Generate fictional networking source and test files.
 3. Generate a small local commit history and matching coverage/Jira/Bugzilla data.
 4. Implement deterministic recommendations from changed paths and coverage data.
 5. Add ChromaDB semantic retrieval and Claude ranking.
-6. Scale generation to 10,000 reproducible commits.
+6. Evaluate the frozen 100-commit corpus with its 70/10/20 chronological split.
 7. Add optional AST-based impact expansion after the baseline works.
 
 The first meaningful milestone is a single fictional code change that produces a
@@ -85,12 +134,12 @@ valid, evidence-backed test recommendation and matches a known golden answer.
 
 ## Proposed evaluation pipeline
 
-The evaluation uses a fixed candidate pool of 50 fictional test suites. Each
+The evaluation uses a fixed candidate pool of 20 fictional test suites. Each
 suite is run independently on a baseline revision so coverage identifies which
 specific suite exercised each source file or symbol.
 
 ```text
-50-suite candidate pool
+20-suite candidate pool
   → per-suite coverage collection
   → source file/symbol to suite index
   → held-out synthetic patch

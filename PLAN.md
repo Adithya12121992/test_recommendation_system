@@ -1,5 +1,22 @@
 # Local Synthetic Test-Recommendation Demo Plan
 
+## Current milestone
+
+The agreed scope is **100 evolution commits and 20 recommendation suites**.
+The product corpus is frozen at `corpus-v1-snapshot` (`cc5afe3`) in the separate
+`test_recommendation_product` repository. It contains 124 individual test cases;
+the 20 primary catalog suites run 110 of them. The remaining 14 cases stay in
+the full-product regression suite. The chronology is 70 train / 10 validation /
+20 evaluation commits. This preliminary evaluation is smaller than a future
+expanded corpus.
+
+`test_catalog.yaml` defines actual unittest class targets, their stable names
+and IDs, source ownership, and the revision at which each suite first exists.
+Descriptions and ownership describe the snapshot and are not measured coverage.
+For historical recommendations, use target-parent evidence; newly introduced
+suites require separate evaluation treatment. MySQL, semantic retrieval, and
+Claude ranking remain to be implemented.
+
 ## Objective
 
 Build a self-contained local demo that recommends a small set of networking test
@@ -32,8 +49,8 @@ known, valid test suites together with the evidence that selected them.
 ### Included
 
 - A GitHub repository containing a fictional networking application.
-- 10,000 synthetic commits with believable change and issue history.
-- Fifty hardcoded test suites in a local YAML test catalog.
+- 100 synthetic commits with believable change and issue history.
+- Twenty runnable primary component suites in a local YAML test catalog.
 - Local MySQL tables for coverage, Bugzilla, Jira, and commit metadata.
 - ChromaDB for local source/test embeddings.
 - A recommendation service that combines deterministic evidence and Claude
@@ -44,7 +61,8 @@ known, valid test suites together with the evidence that selected them.
 
 - Production Gerrit, Jenkins, CIBot, MongoDB, Qdrant, Bugzilla, Jira, and
   product source code.
-- Real test execution or real code-coverage instrumentation.
+- Production test execution or coverage instrumentation; local fictional
+  tests and per-suite coverage are included for evaluation.
 - AST dependency analysis. It can be added after the deterministic and semantic
   demo works.
 - Pushing generated commits unless the supplied GitHub repository is explicitly
@@ -94,7 +112,7 @@ flowchart LR
     Diff --> Engine[Recommendation engine]
     MySQL[(Local MySQL)] -->|coverage and issue evidence| Engine
     Chroma[(Local ChromaDB)] -->|semantic source/test matches| Engine
-    Catalog[test_catalog.yaml\n50 valid suites] -->|validation| Engine
+    Catalog[test_catalog.yaml\n20 valid suites] -->|validation| Engine
     Engine --> Claude[Claude API]
     Claude --> Engine
     Engine --> API[Local REST API / CLI]
@@ -107,8 +125,8 @@ and semantic layers. It must not be allowed to invent test-suite names.
 
 Provide these when implementation begins:
 
-1. A dedicated GitHub repository URL and confirmation that it may receive
-   generated commits. A local clone is sufficient if pushes are not required.
+1. The dedicated `test_recommendation_product` repository (already populated
+   and pushed), with pinned baseline/snapshot tags.
 2. MySQL host, port, database name, username, and a secure method to supply the
    password.
 3. Claude API key through an environment variable, never in source control or
@@ -135,7 +153,7 @@ Do not commit `.env`, database dumps containing secrets, or API keys.
 
 ## Test catalog
 
-Store the fixed recommendation universe in `test_catalog.yaml`. Fifty suites are
+Store the fixed recommendation universe in `test_catalog.yaml`. Twenty suites are
 enough for a representative demo; a separate database catalog is unnecessary.
 
 Each entry needs:
@@ -151,8 +169,9 @@ Each entry needs:
   estimated_runtime_seconds: 90
 ```
 
-Use approximately 50 suites spread across `RelayMesh`, `PacketFlow`,
-`SignalWatch`, `DockAccess`, and `Observatory`.
+Use the 20 primary suites across `RelayMesh`, `PacketFlow`, `SignalWatch`,
+`DockAccess`, `Observatory`, `Transport`, and `Configuration`. Runtime estimates
+are null until measured; names and targets must pass catalog validation.
 
 ## MySQL data model
 
@@ -259,9 +278,12 @@ Bug: BUG-731 -> RelayMesh::PeerRegistry
 Expected recommendation: RouteRecovery first, PeerRegistry as a secondary candidate
 ```
 
-## Commit-history generation
+## Commit-history generation for future corpus versions
 
-Create source and test files first, then produce 10,000 commits using scripted,
+The current 100-commit corpus is already frozen and pushed. The generation
+design below applies to a future corpus version; do not rewrite the v1 history.
+
+Create source and test files first, then produce 100 commits using scripted,
 small changes. Spread commits across fictional authors, components, fix/feature/
 refactor/documentation categories, and dates.
 
@@ -320,13 +342,13 @@ results remain reproducible. Rebuild the index after generating the repository.
 
 - Create local project structure, virtual environment, `.env.example`, and
   Docker Compose configuration for MySQL and ChromaDB if desired.
-- Add the fictional 50-suite test catalog.
+- Add the fictional 20-suite test catalog.
 - Create and validate MySQL schema.
 
 ### Phase 2: Synthetic repository and history
 
-- Generate fictional networking source and test files.
-- Generate 10,000 local commits with deterministic metadata.
+- Use the existing fictional networking source and tests in the product repo.
+- Import the frozen 100-commit manifest and its chronological split.
 - Populate `commit_metadata`, `coverage_mapping`, `jira_mapping`, and
   `bugzilla_mapping` in the same generation run.
 
@@ -345,7 +367,8 @@ results remain reproducible. Rebuild the index after generating the repository.
 
 ### Phase 5: Evaluation and demo
 
-- Hold out at least 200 generated commits as an evaluation set.
+- Use commits 81–100 as the held-out evaluation set; commits 1–70 are training
+  history and 71–80 are validation history.
 - Compare recommended suites with the known mappings used to generate each
   commit.
 - Report precision, recall, top-1 accuracy, top-3 accuracy, and response time.
@@ -355,12 +378,12 @@ results remain reproducible. Rebuild the index after generating the repository.
 ## Proposed evaluation pipeline
 
 The evaluation pipeline validates whether the recommendation system selects tests
-that are relevant to a change. It uses a fixed CF/EF candidate pool of 50
+that are relevant to a change. It uses a fixed CF/EF candidate pool of 20
 fictional test suites and is entirely local to the synthetic demo environment.
 
 ```mermaid
 flowchart LR
-    Pool[CF/EF candidate pool\n50 valid test suites] --> Run[Run each suite independently\non a baseline revision]
+    Pool[CF/EF candidate pool\n20 valid test suites] --> Run[Run each suite independently\non a baseline revision]
     Run --> Coverage[Collect per-test coverage]
     Coverage --> Index[Build source file or symbol\nto test-suite coverage index]
     Source[Baseline source code] --> Ast[Optional AST and call graph]
@@ -442,7 +465,7 @@ fail when that defect exists.
 
 For each fault-injected commit:
 
-1. Run the full 50-suite candidate pool.
+1. Run the full 20-suite candidate pool.
 2. Record the suites that actually fail as the fault-detection ground truth.
 3. Run ITS before executing the full suite set.
 4. Measure whether ITS selected the failing suite in its top-k recommendations.
@@ -461,14 +484,14 @@ Report metrics separately for relevance and fault detection:
 | Precision at k | Relevant recommended suites divided by k. | Avoiding excess tests. |
 | Critical miss rate | Fault-detecting suite omitted from top-k. | Highest-priority safety metric. |
 | Invalid-suite rate | Recommendation not in `test_catalog.yaml`. | Must be zero. |
-| Test-count reduction | Recommended test count versus 50-suite pool. | Efficiency gain. |
+| Test-count reduction | Recommended test count versus 20-suite pool. | Efficiency gain. |
 | Estimated runtime reduction | Runtime avoided versus the full pool. | CI capacity value. |
 | Latency | Time to produce a recommendation. | Operational usability. |
 
 ### Evaluation integrity
 
-- Hold out at least 100 to 200 commits for relevance evaluation and keep them
-  out of index-building and tuning decisions.
+- Hold out the final 20 commits for this 100-commit milestone and keep them
+  out of index-building and tuning decisions. Keep five-commit groups intact.
 - Split data by time; do not randomly mix related commits or patch chains.
 - Restrict every recommendation to `test_catalog.yaml`.
 - Use only mappings, issue links, coverage, and embeddings available before the
@@ -480,10 +503,10 @@ Report metrics separately for relevance and fault detection:
 
 ## Acceptance criteria
 
-- The repository contains 10,000 reproducible fictional commits.
+- The repository contains 100 reproducible fictional commits.
 - No real product paths, names, credentials, or production URLs appear in the
   generated repository or data.
-- Exactly 50 catalog suites are valid recommendation targets.
+- Exactly 20 catalog suites are valid recommendation targets.
 - Every generated commit has consistent metadata and at least one expected suite.
 - The API never returns a suite not in `test_catalog.yaml`.
 - At least one recommendation is returned for a known changed networking file.
@@ -491,13 +514,13 @@ Report metrics separately for relevance and fault detection:
   semantic retrieval.
 - Re-running with the same seed recreates the same mappings and expected results.
 
-## Decisions to make before implementation
+## Decisions remaining
 
-1. Is the GitHub repository private and dedicated to synthetic demo data?
-2. Should all 10,000 commits be pushed, or should GitHub receive a smaller,
-   representative subset after local generation?
-3. Which language should the fictional application use: Python only,
-   Java only, or a mix?
-4. Should MySQL run locally through Docker Compose or connect to an existing
+The dedicated product repository, Python application, 100 evolution commits,
+and baseline/snapshot tags are already in place on GitHub. The 20-suite catalog
+is implemented in the recommendation-system repository.
+
+1. Should MySQL run locally through Docker Compose or use an existing
    non-production MySQL instance?
-5. Do you want a CLI-only demo first, or a web UI as part of the first release?
+2. Which embedding and Claude models should be pinned when those layers begin?
+3. Should a web UI follow the initial CLI and REST API?

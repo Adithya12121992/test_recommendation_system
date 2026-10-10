@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "test-recommendation-system"
+version = "0.1.0"
+description = "Evidence-backed test selection for a fictional networking corpus"
+requires-python = ">=3.11"
+dependencies = ["PyYAML>=6.0,<7"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

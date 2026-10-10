@@ -1,0 +1,228 @@
+# Authoritative recommendation targets for the frozen Mesh Harbor v1 corpus.
+# Ownership and descriptions describe the snapshot; they are not measured coverage.
+schema_version: 1
+catalog_version: 1
+corpus_id: mesh-harbor-v1
+product_snapshot_sha: cc5afe39cab1b0694dd24a8a0d428c317a03ad27
+suites:
+  - id: relay_routes
+    area_suite: RelayMesh::RouteRecovery
+    pipeline: verification
+    description: "Named/default route selection, snapshots, TTL expiry, and expired-route cleanup."
+    unittest_target: tests.unit.test_routes.RouteTableTests
+    test_file: tests/unit/test_routes.py
+    available_since_sha: 85d83219a8e4bbbfc56b939ab2d2672d65cd6d7d
+    owned_paths:
+      - src/mesh_harbor/relay/routing/route_table.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: packet_model
+    area_suite: PacketFlow::PacketModel
+    pipeline: verification
+    description: "Packet byte budgets, deterministic fingerprints, replies, and destination changes."
+    unittest_target: tests.unit.test_packet_features.PacketFeaturesTests
+    test_file: tests/unit/test_packet_features.py
+    available_since_sha: a69f1fad01ff7c54f2f93bbd9901db2a24c18c2b
+    owned_paths:
+      - src/mesh_harbor/parcels/packet.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: json_codec
+    area_suite: PacketFlow::JsonCodec
+    pipeline: verification
+    description: "Compact UTF-8 frames, duplicate-field rejection, frame budgets, and response validation."
+    unittest_target: tests.unit.test_codec_features.CodecFeaturesTests
+    test_file: tests/unit/test_codec_features.py
+    available_since_sha: 386b5e629a7b37183a3c2dd91fdab399bfce2ac1
+    owned_paths:
+      - src/mesh_harbor/parcels/codec/json_codec.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: packet_queue
+    area_suite: PacketFlow::PacketQueue
+    pipeline: verification
+    description: "FIFO inspection, batch drains, capacity changes, cancellation, and atomic batch enqueue."
+    unittest_target: tests.unit.test_queue_features.QueueFeaturesTests
+    test_file: tests/unit/test_queue_features.py
+    available_since_sha: 7c5181bfd47c38f1be89a39e9c291720d8a6bdf7
+    owned_paths:
+      - src/mesh_harbor/parcels/queues/packet_queue.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: peer_registry
+    area_suite: RelayMesh::PeerRegistry
+    pipeline: verification
+    description: "Peer endpoint validation, registry snapshots, address updates, reverse lookup, and host retirement."
+    unittest_target: tests.unit.test_peer_features.PeerFeaturesTests
+    test_file: tests/unit/test_peer_features.py
+    available_since_sha: 28dfed6c767787ed1fef4b41df132a483e51c2b2
+    owned_paths:
+      - src/mesh_harbor/relay/peers/peer_registry.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: heartbeat
+    area_suite: SignalWatch::Heartbeat
+    pipeline: verification
+    description: "Heartbeat validation, age, health snapshots, peer departure, and stale-record cleanup."
+    unittest_target: tests.unit.test_heartbeat_features.HeartbeatFeaturesTests
+    test_file: tests/unit/test_heartbeat_features.py
+    available_since_sha: 93c233282cdee57950843ad60deda567eba06566
+    owned_paths:
+      - src/mesh_harbor/signals/health/heartbeat.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: access_rules
+    area_suite: DockAccess::AccessRules
+    pipeline: verification
+    description: "Reversible source blocks, allowlists, prefix restrictions, and atomic rule replacement."
+    unittest_target: tests.unit.test_access_features.AccessFeaturesTests
+    test_file: tests/unit/test_access_features.py
+    available_since_sha: cbe70bff48b81c98773ac08bc7ae4978e523318d
+    owned_paths:
+      - src/mesh_harbor/docks/access/access_rules.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: traffic_metrics
+    area_suite: Observatory::TrafficMetrics
+    pipeline: verification
+    description: "Traffic summaries, counter resets, byte counts, rejection reasons, and snapshot merging."
+    unittest_target: tests.unit.test_traffic_features.TrafficFeaturesTests
+    test_file: tests/unit/test_traffic_features.py
+    available_since_sha: 36ab51ead3da05020fe763af5b0174ca13f8eb42
+    owned_paths:
+      - src/mesh_harbor/observatory/metrics/traffic_counter.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: network_settings
+    area_suite: Configuration::NetworkSettings
+    pipeline: verification
+    description: "Network settings validation, environment/dictionary loading, immutable copies, and JSON configuration."
+    unittest_target: tests.unit.test_settings_features.SettingsFeaturesTests
+    test_file: tests/unit/test_settings_features.py
+    available_since_sha: 16e0c59e307b6ad3021ca1f6ab0b0ff9f8df944c
+    owned_paths:
+      - src/mesh_harbor/config/settings.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: prefix_routes
+    area_suite: RelayMesh::PrefixRoutes
+    pipeline: verification
+    description: "Longest-prefix IPv4/IPv6 routing, route withdrawal, family defaults, and atomic route replacement."
+    unittest_target: tests.unit.test_prefix_routes.PrefixRoutesTests
+    test_file: tests/unit/test_prefix_routes.py
+    available_since_sha: 211c217f591cf34d2592b282bf2ff9d7d8c46fea
+    owned_paths:
+      - src/mesh_harbor/relay/routing/prefix_routes.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: delivery_tracking
+    area_suite: PacketFlow::DeliveryTracking
+    pipeline: verification
+    description: "Pending delivery registration, acknowledgements, failures, retries, and state summaries."
+    unittest_target: tests.unit.test_delivery_features.DeliveryFeaturesTests
+    test_file: tests/unit/test_delivery_features.py
+    available_since_sha: ff912ca4f7386e4e0a3b9f4925196187353d2788
+    owned_paths:
+      - src/mesh_harbor/parcels/delivery_tracker.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: rate_limits
+    area_suite: DockAccess::RateLimits
+    pipeline: verification
+    description: "Per-source request windows, capacity inspection, cooldowns, resets, and inactive-state cleanup."
+    unittest_target: tests.unit.test_rate_limits.RateLimitsTests
+    test_file: tests/unit/test_rate_limits.py
+    available_since_sha: 5f6b700d64bd6987eb430e649127a16cb0b60452
+    owned_paths:
+      - src/mesh_harbor/docks/access/rate_limiter.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: channel_health
+    area_suite: SignalWatch::ChannelHealth
+    pipeline: verification
+    description: "Rolling latency, loss, jitter, health classification, and observation-window resets."
+    unittest_target: tests.unit.test_channel_features.ChannelFeaturesTests
+    test_file: tests/unit/test_channel_features.py
+    available_since_sha: f492a5932758c6f83f749dac5376b5f76ac04443
+    owned_paths:
+      - src/mesh_harbor/signals/channel_monitor.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: retry_policy
+    area_suite: Transport::RetryPolicy
+    pipeline: verification
+    description: "Capped backoff, explicit jitter, transient-failure classification, retry budgets, and strict configuration."
+    unittest_target: tests.unit.test_retry_features.RetryFeaturesTests
+    test_file: tests/unit/test_retry_features.py
+    available_since_sha: 57a93fd82cb8b6c81ba226835d51d23e9fb85f8f
+    owned_paths:
+      - src/mesh_harbor/transport/tcp/retry_policy.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: packet_integrity
+    area_suite: PacketFlow::PacketIntegrity
+    pipeline: verification
+    description: "CRC32 checks, canonical packet digests, HMAC signatures, and tamper detection."
+    unittest_target: tests.unit.test_integrity_features.IntegrityFeaturesTests
+    test_file: tests/unit/test_integrity_features.py
+    available_since_sha: e1badccad9d61c7ae0f8efbb1fed518871a1e078
+    owned_paths:
+      - src/mesh_harbor/parcels/codec/integrity.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: audit_history
+    area_suite: Observatory::AuditHistory
+    pipeline: verification
+    description: "Bounded payload-free decision logs, source/time filters, decision counts, and history clearing."
+    unittest_target: tests.unit.test_audit_features.AuditFeaturesTests
+    test_file: tests/unit/test_audit_features.py
+    available_since_sha: c3884587d37dcb623c94dba23f428eec53819a47
+    owned_paths:
+      - src/mesh_harbor/observatory/audit_log.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: priority_queue
+    area_suite: PacketFlow::PriorityQueue
+    pipeline: verification
+    description: "Stable priority scheduling, inspection, batch drains, destination cancellation, and capacity changes."
+    unittest_target: tests.unit.test_priority_features.PriorityFeaturesTests
+    test_file: tests/unit/test_priority_features.py
+    available_since_sha: 82891d6238abf2c6b1a09084c42e1b3602b1e7a9
+    owned_paths:
+      - src/mesh_harbor/parcels/queues/priority_queue.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: tcp_endpoints
+    area_suite: Transport::TcpEndpoints
+    pipeline: verification
+    description: "Endpoint validation/parsing, loopback and subnet checks, and strict TCP client response validation."
+    unittest_target: tests.unit.test_endpoint_features.EndpointFeaturesTests
+    test_file: tests/unit/test_endpoint_features.py
+    available_since_sha: da51e91940191fa1c247d78671b037ea9b573f10
+    owned_paths:
+      - src/mesh_harbor/transport/tcp/client.py
+      - src/mesh_harbor/transport/tcp/endpoint.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: cli_configuration
+    area_suite: Configuration::CliConfiguration
+    pipeline: verification
+    description: "CLI host, transport limits, named/default routes, and source-block configuration."
+    unittest_target: tests.unit.test_cli_features.CliFeaturesTests
+    test_file: tests/unit/test_cli_features.py
+    available_since_sha: 1a1efe1d264409e4b2fdc8c7181b384a2504c3f9
+    owned_paths:
+      - src/mesh_harbor/__main__.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
+  - id: relay_policies
+    area_suite: RelayMesh::RelayPolicies
+    pipeline: verification
+    description: "Relay heartbeat, request-rate, payload-budget, audit, and CIDR fallback policy integration."
+    unittest_target: tests.unit.test_relay_policies.RelayPoliciesTests
+    test_file: tests/unit/test_relay_policies.py
+    available_since_sha: bd8cdc7e6980f6d9098fe29e4a56b6c6e9c457ad
+    owned_paths:
+      - src/mesh_harbor/relay/service.py
+    estimated_runtime_seconds: null
+    runtime_estimate_source: unmeasured
