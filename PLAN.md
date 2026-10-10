@@ -139,10 +139,10 @@ Provide these when implementation begins:
 Create an untracked `.env` file from `.env.example`:
 
 ```bash
-MYSQL_HOST=127.0.0.1
+MYSQL_HOST=localhost
 MYSQL_PORT=3306
-MYSQL_DATABASE=mesh_demo
-MYSQL_USER=mesh_demo
+MYSQL_DATABASE=recommendation_system
+MYSQL_USER=root
 MYSQL_PASSWORD=replace_me
 ANTHROPIC_API_KEY=replace_me
 CHROMA_PATH=./data/chroma
@@ -175,82 +175,34 @@ are null until measured; names and targets must pass catalog validation.
 
 ## MySQL data model
 
-### `coverage_mapping`
+The local database `recommendation_system` is implemented on localhost:3306.
+Credentials live in the ignored `.env` file. The authoritative versioned DDL is
+`src/test_recommendation/sql/001_initial.sql`; `database.py` applies and checks
+migrations and imports the frozen manifest/catalog transactionally.
 
-This is the primary deterministic selector input.
+The normalized model replaces the original four-table sketch:
 
-```sql
-CREATE TABLE coverage_mapping (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    source_path VARCHAR(512) NOT NULL,
-    source_symbol VARCHAR(255) NULL,
-    test_id VARCHAR(128) NOT NULL,
-    area_suite VARCHAR(255) NOT NULL,
-    line_coverage DECIMAL(5,2) NOT NULL,
-    function_coverage DECIMAL(5,2) NOT NULL,
-    commit_sha CHAR(40) NOT NULL,
-    branch_name VARCHAR(128) NOT NULL,
-    generated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_coverage_source_path (source_path),
-    INDEX idx_coverage_commit_sha (commit_sha),
-    INDEX idx_coverage_area_suite (area_suite)
-);
-```
+- `corpora` and `commit_metadata` pin corpus identity, 101 baseline/evolution
+  revisions, ancestry, timestamps, and chronological splits.
+- `catalog_versions` and `test_suites` preserve content-hashed catalogs and
+  enforce valid suite references through foreign keys.
+- `coverage_runs` records revision and tool/environment provenance.
+  `coverage_suite_results` stores suite status, timing, and raw JSON.
+  `coverage_mapping` stores per-file counts, percentages, covered/missing lines.
+  `coverage_artifacts` retains binary coverage data, JSON reports, and output.
+- `jira_mapping` and `bugzilla_mapping` contain synthetic issue evidence with
+  explicit availability revisions, not just insertion timestamps.
+- `recommendation_runs` and `recommendation_results` retain target/evidence
+  revisions, ranked suites, configuration, and explanations.
+- `evaluation_runs` and `evaluation_results` store intended/coverage/fault
+  oracles separately from recommendation evidence.
+- `schema_migrations` records migration checksums and completion status.
 
-### `jira_mapping`
-
-```sql
-CREATE TABLE jira_mapping (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    jira_key VARCHAR(32) NOT NULL,
-    commit_sha CHAR(40) NOT NULL,
-    source_path VARCHAR(512) NOT NULL,
-    area_suite VARCHAR(255) NOT NULL,
-    issue_summary VARCHAR(512) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_jira_key (jira_key),
-    INDEX idx_jira_commit_sha (commit_sha),
-    INDEX idx_jira_source_path (source_path)
-);
-```
-
-### `bugzilla_mapping`
-
-```sql
-CREATE TABLE bugzilla_mapping (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    bug_id BIGINT NOT NULL,
-    commit_sha CHAR(40) NOT NULL,
-    source_path VARCHAR(512) NOT NULL,
-    area_suite VARCHAR(255) NOT NULL,
-    bug_summary VARCHAR(512) NOT NULL,
-    severity ENUM('low', 'medium', 'high', 'critical') NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_bug_id (bug_id),
-    INDEX idx_bug_commit_sha (commit_sha),
-    INDEX idx_bug_source_path (source_path)
-);
-```
-
-### `commit_metadata`
-
-This makes synthetic history queryable without repeatedly walking Git.
-
-```sql
-CREATE TABLE commit_metadata (
-    commit_sha CHAR(40) PRIMARY KEY,
-    parent_sha CHAR(40) NULL,
-    branch_name VARCHAR(128) NOT NULL,
-    author_name VARCHAR(128) NOT NULL,
-    commit_message TEXT NOT NULL,
-    changed_files JSON NOT NULL,
-    linked_jira_key VARCHAR(32) NULL,
-    linked_bug_id BIGINT NULL,
-    committed_at DATETIME NOT NULL,
-    INDEX idx_commit_jira (linked_jira_key),
-    INDEX idx_commit_bug (linked_bug_id)
-);
-```
+Coverage/issue/recommendation/evaluation producers remain to be implemented;
+their tables are initially empty. Do not treat unmeasured function/branch
+coverage as zero. Historical queries must enforce ancestry and suite availability.
+Final evaluation admits only training evidence. Expected labels in the stored
+manifest and evaluation results are not retrieval inputs.
 
 ## Synthetic data rules
 
@@ -353,6 +305,15 @@ results remain reproducible. Rebuild the index after generating the repository.
   `bugzilla_mapping` in the same generation run.
 
 ### Phase 3: Semantic retrieval
+
+Coverage collection is implemented by `test_recommendation.coverage_collection`.
+It exports exact Git revisions and measures each available catalog suite
+independently. Initial runs cover the training cutoff (14 suites, 80 cases)
+and final snapshot (20 suites, 110 cases). Both passed and persist raw artifacts,
+line/branch mappings, runtime measurements, and revision provenance in MySQL.
+Snapshot evidence is diagnostic only. Six later suites have no training-cutoff
+coverage; this is an explicit evidence gap. Function coverage is not yet measured.
+Correlated synthetic Jira/Bugzilla evidence and retrieval are still pending.
 
 - Chunk source and test files.
 - Generate embeddings and load ChromaDB.
@@ -520,7 +481,20 @@ The dedicated product repository, Python application, 100 evolution commits,
 and baseline/snapshot tags are already in place on GitHub. The 20-suite catalog
 is implemented in the recommendation-system repository.
 
-1. Should MySQL run locally through Docker Compose or use an existing
-   non-production MySQL instance?
-2. Which embedding and Claude models should be pinned when those layers begin?
-3. Should a web UI follow the initial CLI and REST API?
+The local MySQL instance is configured at localhost:3306 with database
+`recommendation_system`.
+
+1. Which embedding and Claude models should be pinned when those layers begin?
+2. Should a web UI follow the initial CLI and REST API?
+
+### Human-in-the-loop evidence
+
+Record per-suite accept/reject/add/uncertain feedback against recommendation runs.
+Keep reasons, reviewer identity, review state, and availability timestamps.
+Approved, deduplicated, context-relevant feedback contributes at most ±5 points
+to the 0–100 technical ranking; enforce mandatory/strong-evidence protections
+independently. Feedback is not automatically golden ground truth. Prevent
+post-decision feedback from entering historical replay evidence.
+
+Implemented: additive migration 2 and bounded scoring helper. Pending: capture,
+review, temporal/context retrieval, and recommendation integration.

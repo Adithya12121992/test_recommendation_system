@@ -84,15 +84,99 @@ Run catalog validation checks:
 python -m unittest discover -s tests -v
 ```
 
+## Local MySQL storage
+
+The configured local database is **`recommendation_system` on localhost:3306**.
+Credentials are loaded from the ignored, owner-readable `.env` file or matching
+`MYSQL_*` environment variables. `.env.example` contains placeholders only.
+
+The database has 15 tables, including the migration ledger:
+
+| Tables | Stored data |
+| --- | --- |
+| `corpora`, `commit_metadata` | Pinned manifests, revisions, ancestry, UTC timestamps, and train/validation/evaluation splits |
+| `catalog_versions`, `test_suites` | Content-hashed catalog versions and valid runnable suite targets |
+| `coverage_runs`, `coverage_suite_results` | Measured revision, tool/Python versions, run status, per-suite timing and raw JSON |
+| `coverage_mapping`, `coverage_artifacts` | Per-file covered/missing lines, percentages, raw coverage files and test output |
+| `jira_mapping`, `bugzilla_mapping` | Synthetic issue links, source paths, suites, and the revision where evidence becomes available |
+| `recommendation_runs`, `recommendation_results` | Target/evidence revisions, ranked suites, explanations, model/prompt configuration |
+| `evaluation_runs`, `evaluation_results` | Oracle type, expected suites, and evaluation metrics |
+| `schema_migrations` | Versioned migration checksum and completion status |
+
+Initial data includes one corpus, **101 revision rows** (baseline plus 100
+changes), one catalog version, and **20 suites**. Coverage, issue, recommendation,
+and evaluation tables are empty until their producers run. No fabricated
+coverage or issue rows were imported.
+
+Initialize, import, and inspect the database:
+
+```bash
+python -m test_recommendation.database init
+python -m test_recommendation.database seed --product-repo ../test_recommendation_product
+python -m test_recommendation.database status
+```
+
+Initialization can resume an interrupted migration and checks its checksum.
+Repeated seed imports verify immutable values without duplicating data. Changed
+catalog contents require a new catalog version. Seed data is transactional.
+The authoritative schema is
+[src/test_recommendation/sql/001_initial.sql](src/test_recommendation/sql/001_initial.sql).
+
+Coverage is tied to exact revisions through `coverage_runs`; suite references
+are validated by foreign keys. Function/branch percentages stay null when not
+measured. Raw binary/JSON coverage artifacts can be retained in MySQL as well as
+local `artifacts/coverage/` files.
+
+Collect independent line and branch coverage from an exported Git revision:
+
+```bash
+python -m test_recommendation.coverage_collection --product-repo ../test_recommendation_product
+python -m test_recommendation.coverage_collection --product-repo ../test_recommendation_product --revision snapshot
+```
+
+The default measures the last training commit (`55a761e`): 14 available suites,
+80 test cases. The final snapshot (`cc5afe3`) measures all 20 suites, 110 cases,
+and is marked diagnostic only. Six suites did not yet exist at the training
+cutoff; do not backfill their evidence from the final snapshot. An explicit
+full corpus SHA is also accepted. Training measurements can support held-out
+evaluation only when the measured revision precedes the target commit;
+earlier training targets require earlier measurements.
+
+Each run writes `artifacts/coverage/<full-sha>/<run-id>/run.json` and
+`coverage_index.json`, plus per-suite `.coverage`, `coverage.json`, and
+`test_output.txt`. MySQL retains the same artifacts with SHA-256 checksums,
+per-file line/branch measurements, pass status, and elapsed times. The index
+includes only files touched by passing suites. Function percentages remain
+null; measured timings do not modify the immutable catalog. Runs export source
+and tests to a temporary directory, leaving the product worktree untouched.
+
+Both initial runs passed: 34 suite results, 692 file mappings, 102 retained
+artifacts. Coverage generation is complete; correlated synthetic issue data
+and recommendation retrieval remain to be implemented.
+Issue availability uses Git revisions rather than database insertion time.
+Recommendation queries must enforce ancestry, catalog availability, successful
+coverage runs/suite results, and the train-only evidence policy for evaluation.
+Expected labels in `evaluation_results` and `corpora.manifest_json` are
+provenance/evaluation data and must never serve as retrieval evidence.
+
+Run live storage checks with the configured database:
+
+```bash
+RUN_MYSQL_TESTS=1 python -m unittest discover -s tests -v
+```
+
+These checks roll back every fixture write. Without the flag, network-free
+checks run and MySQL integration checks are skipped.
+
 ## Local configuration
 
 Create an untracked `.env` file from `.env.example`:
 
 ```bash
-MYSQL_HOST=127.0.0.1
+MYSQL_HOST=localhost
 MYSQL_PORT=3306
-MYSQL_DATABASE=mesh_demo
-MYSQL_USER=mesh_demo
+MYSQL_DATABASE=recommendation_system
+MYSQL_USER=root
 MYSQL_PASSWORD=replace_me
 ANTHROPIC_API_KEY=replace_me
 CHROMA_PATH=./data/chroma
@@ -107,11 +191,11 @@ The first version uses a fixed YAML catalog of 20 fictional valid test suites,
 such as `RelayMesh::RouteRecovery`. A full database-backed test catalog is not
 required for the demo.
 
-The local MySQL schema contains these core tables:
+The implemented MySQL schema includes these core evidence tables:
 
 | Table | Purpose |
 | --- | --- |
-| `coverage_mapping` | Maps fictional source paths/symbols to test suites and coverage values. |
+| `coverage_mapping` | Maps source files to per-suite covered/missing lines and measured percentages, joined to revision-specific runs. |
 | `jira_mapping` | Links fictional issue IDs, commits, paths, and valid suites. |
 | `bugzilla_mapping` | Links fictional bug IDs, commits, paths, and valid suites. |
 | `commit_metadata` | Records generated commit history and changed paths. |
@@ -169,3 +253,28 @@ test in its top-k results.
 
 Externally, describe this as a **controlled synthetic validation harness**, not
 production validation.
+
+## Human feedback
+
+Migration `002_feedback.sql` adds `recommendation_feedback`, linked to a
+recommendation run and a catalog suite. The run identifies the target commit.
+Actions are accept, reject, add a missing suite, or uncertain; reasons distinguish
+relevance, redundancy, cost, and failure detection. Feedback starts pending and
+requires reviewer identity and review time for approval or dismissal.
+
+`test_recommendation.feedback.adjust_score` provides a bounded ranking adjustment:
+base technical score (0–100) plus at most ±5 points, clipped to 0–100. A neutral
+prior dampens single-user influence; conflicting votes cancel. This is a five-point
+cap, not a trained probability or a guaranteed five-percent contribution.
+
+Future retrieval must use only approved feedback available before the decision,
+from relevant, ancestor-compatible changes and compatible suite identities.
+Deduplicate repeated votes per reviewer/context; pending, dismissed, uncertain,
+and cost-only feedback must not become negative relevance evidence. Historical
+evaluations freeze the review-time cutoff. Golden answer changes require separate
+review. Mandatory suites and strongly supported technical candidates remain
+protected by the selector, regardless of feedback adjustments.
+
+Storage and the scoring helper are implemented. Capture UI/CLI, review workflows,
+context matching, retrieval, and integration with the future recommender remain
+pending; feedback currently changes no recommendations.

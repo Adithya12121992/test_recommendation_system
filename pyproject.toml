@@ -7,7 +7,10 @@ name = "test-recommendation-system"
 version = "0.1.0"
 description = "Evidence-backed test selection for a fictional networking corpus"
 requires-python = ">=3.11"
-dependencies = ["PyYAML>=6.0,<7"]
+dependencies = ["PyYAML>=6.0,<7", "PyMySQL>=1.1,<2", "python-dotenv>=1.0,<2", "coverage>=7,<8"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+test_recommendation = ["sql/*.sql"]
