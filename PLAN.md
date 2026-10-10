@@ -498,3 +498,13 @@ post-decision feedback from entering historical replay evidence.
 
 Implemented: additive migration 2 and bounded scoring helper. Pending: capture,
 review, temporal/context retrieval, and recommendation integration.
+
+### Rolling evaluation coverage
+
+Implemented `test_recommendation.evaluation_coverage`: measure each reserved
+evaluation commit's exact parent, persist target/base/run/catalog links under
+`rolling-parent-v1`, and record unavailable suites explicitly. Existing links are
+immutable and verified on rerun. This rolling policy may use earlier evaluation
+changes after they land; report its scores separately from fixed-training scores.
+Historical measurements are reconstructed using recorded current tooling.
+Golden-label review, AST/call graph expansion, and new-code fallback remain pending.

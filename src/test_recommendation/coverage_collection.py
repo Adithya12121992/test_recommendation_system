@@ -56,9 +56,14 @@ def write_json(path, value):
     path.write_text(json.dumps(value, indent=2) + '\n')
 
 
-def collect(config, catalog_path, repo, requested, artifact_root):
+def collect(config, catalog_path, repo, requested, artifact_root, *, target_sha=None):
     catalog, manifest = load_inputs(catalog_path, repo)
     revision, train_evidence = select_revision(manifest, requested)
+    if target_sha is not None:
+        targets = [entry for entry in manifest['commits'] if entry['commit_sha'] == target_sha]
+        require(len(targets) == 1 and targets[0]['split'] == 'evaluation', 'Target must be an evaluation commit')
+        require(targets[0]['parent_sha'] == revision, 'Rolling coverage must measure the exact target parent')
+        require(git(repo, 'rev-parse', f'{target_sha}^').decode().strip() == revision, 'Target parent differs from Git')
     catalog_key = seed(config, catalog_path, repo)
     eligible, unavailable = [], []
     for suite in catalog['suites']:
@@ -73,6 +78,8 @@ def collect(config, catalog_path, repo, requested, artifact_root):
     destination.mkdir(parents=True)
     environment_info = {'platform': platform.platform(), 'purpose': 'training_evidence' if train_evidence else 'diagnostic',
                         'usable_for_held_out_evaluation': train_evidence, 'unavailable_suite_ids': unavailable}
+    if target_sha is not None:
+        environment_info.update(purpose='rolling_parent_evidence', eligible_target_sha=target_sha)
     report = dict(run_id=run_id, revision_sha=revision, catalog_key=catalog_key,
                   **environment_info, status='running', suites=[])
     source_files = set(git(repo, 'ls-tree', '-r', '--name-only', revision, 'src').decode().splitlines())

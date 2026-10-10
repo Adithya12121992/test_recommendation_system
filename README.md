@@ -278,3 +278,32 @@ protected by the selector, regardless of feedback adjustments.
 Storage and the scoring helper are implemented. Capture UI/CLI, review workflows,
 context matching, retrieval, and integration with the future recommender remain
 pending; feedback currently changes no recommendations.
+
+## Rolling coverage for evaluation changes
+
+```bash
+python -m test_recommendation.evaluation_coverage --product-repo ../test_recommendation_product
+```
+
+This measures all available catalog suites at the exact parent of each of the
+20 reserved evaluation commits. Policy `rolling-parent-v1` allows evidence from
+previously landed changes, including earlier evaluation changes; it is separate
+from the fixed-training policy. Each case has a target-specific eligibility link
+in `evaluation_case_coverage`, added by migration 3. No final-snapshot coverage
+is substituted for parent coverage, and expected-suite labels are not consulted.
+
+Results are indexed in
+`artifacts/coverage/evaluation_cases/rolling-parent-v1/index.json` and refer to
+revision/run-specific artifacts. Reruns validate and reuse pinned successful
+runs, checking exact parent, catalog, suite counts, and all artifact checksums.
+Unavailable suites are explicit evidence gaps; suites introduced by the target
+change have no parent coverage. AST analysis and fallback selection will need
+to address new code. These are reserved evaluation scenarios, not yet vetted
+golden cases. Case IDs E001–E020 are local coverage identifiers.
+
+Coverage is reconstructed now from historical source and tests under today's
+recorded Python/tool environment. It is not proof of what was actually measured
+at the historical commit time; external dependencies and services would also
+need reproducible fixtures in a production replay. Rolling links permit evidence
+only for their recorded target; the original fixed-cutoff eligibility flags
+remain separate.
