@@ -672,3 +672,14 @@ Verification: 76 tests passed, including MySQL integration checks and cases for
 bounded feedback, duplicate evidence, protected suites, measured-path
 preservation, valid reduction, malformed decisions, API failure, truncation,
 evidence gaps, and revision mismatch.
+
+### Negative recommendation evaluation
+
+`.venv/bin/python -m test_recommendation.negative_evaluation` runs 160 deliberately
+constructed controls across the 20 frozen golden cases. All passed: missing
+required suites and invalid identities are detected, extras are flagged for
+review, and entire-catalog selections are identified. The checksummed report is
+`artifacts/evaluation/negative_cases/report.json`. See
+[negative-control usage and prediction format](evals/README.md#negative-recommendation-controls)
+for evaluating revision-pinned historical predictions. This tests the evaluator;
+it does not execute product tests or establish Claude recommendation quality.

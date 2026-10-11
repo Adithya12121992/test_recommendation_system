@@ -643,3 +643,16 @@ head-revision test names, ranking components, and Claude decisions. Suite-level
 coverage remains distinct from individual test availability. All 76 tests passed,
 including the local MySQL checks. Scoring calibration, golden selection replay,
 execution, and automatic PR triggering remain pending.
+
+### Negative recommendation evaluation harness implemented
+
+An offline harness exercises eight controls for each frozen golden case (160
+checks): correct minimum, omitted required suite, replacement with an unvetted
+extra, added extra, entire catalog, unknown suite, duplicate suite, and wrong
+revision. All 160 controls passed. Required-suite recall detects omissions;
+unlisted suites remain review flags, preserving minimum-required label semantics.
+Submitted historical predictions require all 20 cases and exact versions/base/
+target revisions. Reports include dataset/catalog checksums and valid-case recall
+denominators. Outputs are saved under `artifacts/evaluation/negative_cases`.
+These controls validate the evaluator rather than Claude quality. Controlled-fault
+execution against selected versus full reference suites remains pending.
