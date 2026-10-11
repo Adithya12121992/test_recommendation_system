@@ -1,0 +1,29 @@
+{
+  "reviewer": "Codex",
+  "review_type": "agent source-and-assertion review",
+  "human_approved": false,
+  "oracle_kind": "required_behavior_suites",
+  "label_semantics": "Minimum required suites in the 20-suite catalog; extra suites are not automatically incorrect. No fault-detection claim.",
+  "cases": [
+    {"sequence":81,"required_suites":["priority_queue"],"focus_test":"test_priority_and_stable_equal_priority_order","rationale":"New heap queue must prefer larger priorities, preserve FIFO ties, enforce capacity, and return None when empty."},
+    {"sequence":82,"required_suites":["priority_queue"],"focus_test":"test_priority_peek_preserves_queue","rationale":"Peek must return the next packet without removing it, including the empty case."},
+    {"sequence":83,"required_suites":["priority_queue"],"focus_test":"test_priority_batch_drain_retains_remaining_work","rationale":"Bounded drain must preserve remaining priority order and reject negative limits."},
+    {"sequence":84,"required_suites":["priority_queue"],"focus_test":"test_priority_cancellation_preserves_remaining_order","rationale":"Destination cancellation removes only matching packets and restores heap ordering."},
+    {"sequence":85,"required_suites":["priority_queue"],"focus_test":"test_priority_resize_is_atomic","rationale":"Rejected shrinking must preserve capacity; valid growth retains pending packets."},
+    {"sequence":86,"required_suites":["tcp_endpoints"],"focus_test":"test_endpoint_validation_and_ipv6_formatting","rationale":"New endpoint validates host/port and formats IPv6 brackets. Existing client does not yet use Endpoint."},
+    {"sequence":87,"required_suites":["tcp_endpoints"],"focus_test":"test_endpoint_parsing_round_trip","rationale":"Parsing round-trips hostnames and bracketed IPv6 and rejects ambiguous/invalid formats."},
+    {"sequence":88,"required_suites":["tcp_endpoints"],"focus_test":"test_loopback_detection_does_not_require_dns","rationale":"Loopback classification handles literals and localhost without resolving arbitrary hostnames."},
+    {"sequence":89,"required_suites":["tcp_endpoints"],"focus_test":"test_endpoint_network_membership","rationale":"Network membership respects IP versions, returns false for hostnames, and rejects invalid networks."},
+    {"sequence":90,"required_suites":["tcp_endpoints"],"focus_test":"test_client_rejects_invalid_endpoint_and_response","rationale":"Client now constructs Endpoint and validates decoded response shape; invalid endpoint and array response must fail. TCP exchange remains a supplemental reference outside the catalog."},
+    {"sequence":91,"required_suites":["cli_configuration"],"focus_test":"test_cli_host_option_reaches_client_settings","rationale":"New CLI argument injection must pass host and port to client Settings; client is mocked, so endpoint suite does not assert this wiring."},
+    {"sequence":92,"required_suites":["cli_configuration"],"focus_test":"test_cli_transport_limits_are_validated","rationale":"CLI passes timeout/frame limits to Settings and preserves invalid-timeout rejection; unchanged Settings tests alone cannot assert CLI wiring."},
+    {"sequence":93,"required_suites":["cli_configuration"],"focus_test":"test_cli_routes_are_applied_before_server_startup","rationale":"CLI populates named routes before server construction and reports malformed route arguments; isolated route-table tests cannot verify CLI parsing."},
+    {"sequence":94,"required_suites":["cli_configuration"],"focus_test":"test_cli_default_route_is_optional","rationale":"CLI installs a configured default and leaves fallback absent otherwise."},
+    {"sequence":95,"required_suites":["cli_configuration"],"focus_test":"test_cli_source_blocks_reach_relay_service","rationale":"Blocked-source CLI arguments must reach access rules and relay decisions, including allowed-source acceptance."},
+    {"sequence":96,"required_suites":["relay_policies","cli_configuration"],"focus_test":"test_optional_heartbeat_policy_gates_next_hop","rationale":"Relay policies assert heartbeat gating and rejection accounting. Existing CLI server-route/source-block assertions protect default RelayService construction and handling after the rejection refactor."},
+    {"sequence":97,"required_suites":["relay_policies","cli_configuration"],"focus_test":"test_rate_limits_apply_only_to_eligible_requests","rationale":"Rate capacity must be consumed only for eligible requests and remain per source. CLI server assertions protect unchanged no-limiter defaults."},
+    {"sequence":98,"required_suites":["relay_policies","cli_configuration"],"focus_test":"test_payload_policy_uses_bytes_and_preserves_rate_capacity","rationale":"Payload gating counts UTF-8 bytes and must precede rate consumption. CLI assertions retain no-payload-limit behavior."},
+    {"sequence":99,"required_suites":["relay_policies","cli_configuration"],"focus_test":"test_audit_covers_accepted_and_rejected_decisions","rationale":"Public handle wrapper must audit both outcomes without payload disclosure. CLI source-block and route assertions exercise the refactored public handle with audit disabled."},
+    {"sequence":100,"required_suites":["relay_policies","cli_configuration"],"focus_test":"test_cidr_fallback_obeys_named_routes_and_optional_policies","rationale":"CIDR fallback must respect named-route precedence and heartbeat/audit policies. CLI assertions preserve named/default routes with prefix fallback disabled. Combined TCP policies are supplemental reference tests outside the catalog."}
+  ]
+}

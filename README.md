@@ -298,8 +298,8 @@ revision/run-specific artifacts. Reruns validate and reuse pinned successful
 runs, checking exact parent, catalog, suite counts, and all artifact checksums.
 Unavailable suites are explicit evidence gaps; suites introduced by the target
 change have no parent coverage. AST analysis and fallback selection will need
-to address new code. These are reserved evaluation scenarios, not yet vetted
-golden cases. Case IDs E001–E020 are local coverage identifiers.
+to address new code. These reserved scenarios now have agent-reviewed golden cases G001–G020
+in `evals/`; case IDs E001–E020 remain local coverage identifiers.
 
 Coverage is reconstructed now from historical source and tests under today's
 recorded Python/tool environment. It is not proof of what was actually measured
@@ -382,4 +382,33 @@ Artifacts are `artifacts/issues/historical-issues-v1/dataset.json` and
 case exports, records must also reference paths and suites present at the parent.
 Future recommendation queries must enforce the same availability, catalog, and
 path/suite checks when reading MySQL mappings. Issue evidence is not automatically
-a golden answer; independent review and candidate retrieval remain pending.
+a golden answer; the independent source/assertion review is recorded in `evals/`,
+while candidate retrieval remains pending.
+
+## Frozen golden cases and evidence validation
+
+Step 3 preparation is complete for the initial **agent-reviewed** release:
+[golden dataset v1](evals/golden_dataset_v1.json) and
+[behavioral review](evals/golden_review_v1.json). G001–G020 are change-to-suite
+cases, each pinned to its base/target and parent coverage. Dataset version 1
+uses rolling-parent evidence and records reviewer attribution honestly:
+`human_approved: false`. No LLM candidate-generation algorithm generated these
+expected labels. The minimum-required behavioral labels were established by
+source/test assertion review; extra suites are not automatically incorrect.
+
+```bash
+python -m test_recommendation.golden --product-repo ../test_recommendation_product
+```
+
+All 20 full reference runs passed, totaling 2,271 test executions. The four
+new-suite cases disclose unavailable parent coverage. Evidence validation checks
+Git ancestry, catalog identity, suite/method availability, coverage/artifact
+consistency, graph provenance, issue mapping consistency and availability, and
+reference output checksums. Frozen answers/evidence cannot be overwritten by
+rerunning the command. MySQL stores the dataset and checksum in `golden_datasets`.
+
+See [evaluation notes](evals/README.md) for scope and portability limits. These
+20 cases cover four feature groups and establish behavioral relevance, not
+fault detection or comprehensive suite relevance. Golden labels are forbidden
+as retrieval evidence. Candidate retrieval, new-code fallback, LLM reduction,
+and performance scoring remain next.

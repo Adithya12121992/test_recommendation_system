@@ -1,0 +1,940 @@
+{
+  "schema_version": 1,
+  "dataset_id": "mesh-harbor-golden",
+  "dataset_version": 1,
+  "corpus_id": "mesh-harbor-v1",
+  "catalog_key": "1d78694a50243946b1c885a2ce0cfede0a41d89ae6217fe44d4db20c0e604603",
+  "history_sha256": "de932e7fb7a526f504fa096645ebbdabbee4e52efcb6d158005f3abed4303d4a",
+  "review_sha256": "d41a74ed0132f4836f3010c13663269022896c7e5a04028f1ab05c0ec9de32e1",
+  "reviewer": "Codex",
+  "review_type": "agent source-and-assertion review",
+  "human_approved": false,
+  "frozen_at": "2026-10-11T01:47:24.096975+00:00",
+  "oracle_kind": "required_behavior_suites",
+  "label_semantics": "Minimum required suites in the 20-suite catalog; extra suites are not automatically incorrect. No fault-detection claim.",
+  "cases": [
+    {
+      "case_id": "G001",
+      "case_version": 1,
+      "target_commit_sha": "82891d6238abf2c6b1a09084c42e1b3602b1e7a9",
+      "base_revision_sha": "468f48f2983aca10081c8ae03d133429e9799f39",
+      "required_suite_ids": [
+        "priority_queue"
+      ],
+      "focus_test": "test_priority_and_stable_equal_priority_order",
+      "rationale": "New heap queue must prefer larger priorities, preserve FIFO ties, enforce capacity, and return None when empty.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "1cf40fd8-8557-4f58-9236-7a1ee58388d3",
+        "coverage_artifacts_sha256": "541b6e507053946ea8a6846bbb05f0c1fb5b55a784b44473e859ce60561d9c24",
+        "unavailable_suite_ids": [
+          "cli_configuration",
+          "priority_queue",
+          "relay_policies",
+          "tcp_endpoints"
+        ],
+        "ast_graphs": [
+          {
+            "revision_sha": "468f48f2983aca10081c8ae03d133429e9799f39",
+            "content_sha256": "c07920f5ca019fcdb56534968e7c7fc4691d678c33509fa3b1fc3dba416dbe19"
+          },
+          {
+            "revision_sha": "82891d6238abf2c6b1a09084c42e1b3602b1e7a9",
+            "content_sha256": "5202facf8a858dcab486c3e04017e50b365ef8da2fbbd60a07d2d49bda684eca"
+          }
+        ],
+        "impact_sha256": "c88c2dfa8c1d3015a9a576c92b6976fb9a78c694e4d6b7d35b32c1eee63bb073",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "d7b7b94bb6db0f5fcd7bdc9e97c012af80857b785e7ad2c0be01c626d109336a",
+        "eligible_issue_count": 90
+      },
+      "required_suites_without_parent_coverage": [
+        "priority_queue"
+      ],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 104,
+        "elapsed_seconds": 2.103022666880861,
+        "python_version": "3.14.6",
+        "output_sha256": "d942cb85d30eb4c14ad3014d359a15f033df31d022a1c2897547d102e7675be5",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/82891d6238abf2c6b1a09084c42e1b3602b1e7a9.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G002",
+      "case_version": 1,
+      "target_commit_sha": "e7f46835521036b67fe06ef7e21bd8ddc1af0791",
+      "base_revision_sha": "82891d6238abf2c6b1a09084c42e1b3602b1e7a9",
+      "required_suite_ids": [
+        "priority_queue"
+      ],
+      "focus_test": "test_priority_peek_preserves_queue",
+      "rationale": "Peek must return the next packet without removing it, including the empty case.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "49a2fa5e-dea5-4390-a365-db4be816bbd0",
+        "coverage_artifacts_sha256": "fb4372fad273dc835e0d29e411de5f147d3c9e3ad2aa5e4d8791d242c6429bea",
+        "unavailable_suite_ids": [
+          "cli_configuration",
+          "relay_policies",
+          "tcp_endpoints"
+        ],
+        "ast_graphs": [
+          {
+            "revision_sha": "82891d6238abf2c6b1a09084c42e1b3602b1e7a9",
+            "content_sha256": "5202facf8a858dcab486c3e04017e50b365ef8da2fbbd60a07d2d49bda684eca"
+          },
+          {
+            "revision_sha": "e7f46835521036b67fe06ef7e21bd8ddc1af0791",
+            "content_sha256": "44b0b6a2e969c4ddfde77d3ce213effc295a5a556bcdf48b1f0e97c640850b22"
+          }
+        ],
+        "impact_sha256": "5b2c1a23f19ba94d4b78cd1c347e8435e106d3432130815cf39ef293cfe80bba",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "efe3bdfd7b781af33cfb22ad693a5fc0f1e88f73ad8925bfa19a302f6acd119d",
+        "eligible_issue_count": 91
+      },
+      "required_suites_without_parent_coverage": [],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 105,
+        "elapsed_seconds": 2.0961725409142673,
+        "python_version": "3.14.6",
+        "output_sha256": "328d5249e7f10ba5203bbdc0d5e8a8aa0847cf8381a87f1fdd9c37a543af7a2c",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/e7f46835521036b67fe06ef7e21bd8ddc1af0791.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G003",
+      "case_version": 1,
+      "target_commit_sha": "70aefdce3c135d64a31c7a91ef9fa62de217c869",
+      "base_revision_sha": "e7f46835521036b67fe06ef7e21bd8ddc1af0791",
+      "required_suite_ids": [
+        "priority_queue"
+      ],
+      "focus_test": "test_priority_batch_drain_retains_remaining_work",
+      "rationale": "Bounded drain must preserve remaining priority order and reject negative limits.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "1e98f69f-27d6-4051-aeed-3f01a9823201",
+        "coverage_artifacts_sha256": "76b80ca2f2745174c81b16e8f7361966b8e77091e0909c1d39188eab9d7fdc9e",
+        "unavailable_suite_ids": [
+          "cli_configuration",
+          "relay_policies",
+          "tcp_endpoints"
+        ],
+        "ast_graphs": [
+          {
+            "revision_sha": "e7f46835521036b67fe06ef7e21bd8ddc1af0791",
+            "content_sha256": "44b0b6a2e969c4ddfde77d3ce213effc295a5a556bcdf48b1f0e97c640850b22"
+          },
+          {
+            "revision_sha": "70aefdce3c135d64a31c7a91ef9fa62de217c869",
+            "content_sha256": "b961a7dbe353596f0a016cabf970bccf007635455341ccb45c8ba7f3ab950258"
+          }
+        ],
+        "impact_sha256": "dbd1aa3e98da3b2b7274e48739e032d16705482f9908bbd022e09a05dbdd9603",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "e795ed83e8d0b86edaef3590f2e234490ce1d459b4cafd930daa450c41f0e7b3",
+        "eligible_issue_count": 92
+      },
+      "required_suites_without_parent_coverage": [],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 106,
+        "elapsed_seconds": 2.092974375002086,
+        "python_version": "3.14.6",
+        "output_sha256": "90fa357d9f570358e381fbbd5332450fba2229e5d3596e510d0bcd6f413c62c0",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/70aefdce3c135d64a31c7a91ef9fa62de217c869.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G004",
+      "case_version": 1,
+      "target_commit_sha": "c0e1c4d64b7d3c26b25fba9007b223ad8d8bd60d",
+      "base_revision_sha": "70aefdce3c135d64a31c7a91ef9fa62de217c869",
+      "required_suite_ids": [
+        "priority_queue"
+      ],
+      "focus_test": "test_priority_cancellation_preserves_remaining_order",
+      "rationale": "Destination cancellation removes only matching packets and restores heap ordering.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "d9339f30-8f8f-48d0-8829-7424142b1745",
+        "coverage_artifacts_sha256": "7e9ac22e63ce45e97a44ff68b6eadc603893594e2d13761b52fba487c13493b7",
+        "unavailable_suite_ids": [
+          "cli_configuration",
+          "relay_policies",
+          "tcp_endpoints"
+        ],
+        "ast_graphs": [
+          {
+            "revision_sha": "70aefdce3c135d64a31c7a91ef9fa62de217c869",
+            "content_sha256": "b961a7dbe353596f0a016cabf970bccf007635455341ccb45c8ba7f3ab950258"
+          },
+          {
+            "revision_sha": "c0e1c4d64b7d3c26b25fba9007b223ad8d8bd60d",
+            "content_sha256": "0afa78a0727499282297bc0a6d68434113df9663399acc95fbd8cb6a6e6fca88"
+          }
+        ],
+        "impact_sha256": "78e1aff5c7016d4e83532d83f9eea6f1123d4dbc4eafeab22114b1346d8784e2",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "3a2fe918871b015dd65dd44c65b9ef71a5ff9f157e6681a596801fd24bbfde3f",
+        "eligible_issue_count": 93
+      },
+      "required_suites_without_parent_coverage": [],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 107,
+        "elapsed_seconds": 2.0983731250744313,
+        "python_version": "3.14.6",
+        "output_sha256": "0443403c3b3d6e65ca5506a887b67138d9beb4c756b9e7a4dd243d2371560d6c",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/c0e1c4d64b7d3c26b25fba9007b223ad8d8bd60d.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G005",
+      "case_version": 1,
+      "target_commit_sha": "58b497366c7c0c7c72276b83a087daae7501fe2e",
+      "base_revision_sha": "c0e1c4d64b7d3c26b25fba9007b223ad8d8bd60d",
+      "required_suite_ids": [
+        "priority_queue"
+      ],
+      "focus_test": "test_priority_resize_is_atomic",
+      "rationale": "Rejected shrinking must preserve capacity; valid growth retains pending packets.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "6a5dd730-75b7-4a50-b78d-d489c941c0ef",
+        "coverage_artifacts_sha256": "e47cb72e6587dd399165fcfb52b40be974fbdcbe90e09ffe890d1ec992b6e842",
+        "unavailable_suite_ids": [
+          "cli_configuration",
+          "relay_policies",
+          "tcp_endpoints"
+        ],
+        "ast_graphs": [
+          {
+            "revision_sha": "c0e1c4d64b7d3c26b25fba9007b223ad8d8bd60d",
+            "content_sha256": "0afa78a0727499282297bc0a6d68434113df9663399acc95fbd8cb6a6e6fca88"
+          },
+          {
+            "revision_sha": "58b497366c7c0c7c72276b83a087daae7501fe2e",
+            "content_sha256": "fa98e62774d354a2035dbb67d3c2a3144f40b7f51f00b337041f7929c85f4356"
+          }
+        ],
+        "impact_sha256": "3891e8be70e566a0cd14a2f322320db8ea5dc165387590369819b0caecca960e",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "fc9ae531c4c5b0646b1b203f68c9c06b4c739805c0bca0c4540c81724a7a265d",
+        "eligible_issue_count": 94
+      },
+      "required_suites_without_parent_coverage": [],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 108,
+        "elapsed_seconds": 2.0984901250340044,
+        "python_version": "3.14.6",
+        "output_sha256": "c0d622b3dbbb7cccd3d6031d81c46b02ff19072d5c4259c9d83cfe3854c32206",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/58b497366c7c0c7c72276b83a087daae7501fe2e.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G006",
+      "case_version": 1,
+      "target_commit_sha": "da51e91940191fa1c247d78671b037ea9b573f10",
+      "base_revision_sha": "58b497366c7c0c7c72276b83a087daae7501fe2e",
+      "required_suite_ids": [
+        "tcp_endpoints"
+      ],
+      "focus_test": "test_endpoint_validation_and_ipv6_formatting",
+      "rationale": "New endpoint validates host/port and formats IPv6 brackets. Existing client does not yet use Endpoint.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "f8ae8d6b-a539-4aec-ba0a-c1d79d25fd38",
+        "coverage_artifacts_sha256": "4f3545db0fe35ef1056ff55e34afa103a4872e07dc1c74a41dfadffe61599730",
+        "unavailable_suite_ids": [
+          "cli_configuration",
+          "relay_policies",
+          "tcp_endpoints"
+        ],
+        "ast_graphs": [
+          {
+            "revision_sha": "58b497366c7c0c7c72276b83a087daae7501fe2e",
+            "content_sha256": "fa98e62774d354a2035dbb67d3c2a3144f40b7f51f00b337041f7929c85f4356"
+          },
+          {
+            "revision_sha": "da51e91940191fa1c247d78671b037ea9b573f10",
+            "content_sha256": "d06e8d6955d3652375bf4683dcb80f5b094d5cec7a529d29f690767536f9c541"
+          }
+        ],
+        "impact_sha256": "ec76d33444f921b13b63d84434eb5b3837a0584c7a554b6776a5d67a01d30fcc",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "afffb2c96d7e9aaf6091b186d8452e3fed00eb5c8f27d9dc043d7e7aa16c860c",
+        "eligible_issue_count": 95
+      },
+      "required_suites_without_parent_coverage": [
+        "tcp_endpoints"
+      ],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 109,
+        "elapsed_seconds": 2.0986794158816338,
+        "python_version": "3.14.6",
+        "output_sha256": "e3ead721e63bef746c1ee937ac2be77788e0d358ba62cd88a3de1f885c197e65",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/da51e91940191fa1c247d78671b037ea9b573f10.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G007",
+      "case_version": 1,
+      "target_commit_sha": "2b1d11ae6c5a00a37706479a2741794ab1d64721",
+      "base_revision_sha": "da51e91940191fa1c247d78671b037ea9b573f10",
+      "required_suite_ids": [
+        "tcp_endpoints"
+      ],
+      "focus_test": "test_endpoint_parsing_round_trip",
+      "rationale": "Parsing round-trips hostnames and bracketed IPv6 and rejects ambiguous/invalid formats.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "77addb4d-f1ad-4008-85b2-052a93bdfee9",
+        "coverage_artifacts_sha256": "cf05a7c70eec5dc1e61e6d0b43f1fda4878ecceadb1ac1eee6e4ac14e5960b28",
+        "unavailable_suite_ids": [
+          "cli_configuration",
+          "relay_policies"
+        ],
+        "ast_graphs": [
+          {
+            "revision_sha": "da51e91940191fa1c247d78671b037ea9b573f10",
+            "content_sha256": "d06e8d6955d3652375bf4683dcb80f5b094d5cec7a529d29f690767536f9c541"
+          },
+          {
+            "revision_sha": "2b1d11ae6c5a00a37706479a2741794ab1d64721",
+            "content_sha256": "3365dbfb63d682696aea144bafe746dce6a6c9b91dd6b6ea1cf703ec6d80300e"
+          }
+        ],
+        "impact_sha256": "7c7c440534b3ad2f77ceceadfedb723fdc48bb91c40f71dcd0d90325cc208a32",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "de0e0a6c3fdb4f89cc3d939eb7dd97bd56cac966f02d40d81980f2ba9fb62d28",
+        "eligible_issue_count": 96
+      },
+      "required_suites_without_parent_coverage": [],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 110,
+        "elapsed_seconds": 2.0957680828869343,
+        "python_version": "3.14.6",
+        "output_sha256": "30db5798581d6656743effe3c41a3fcb2bbf1ccce0e392e3400d5756ad66ee2a",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/2b1d11ae6c5a00a37706479a2741794ab1d64721.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G008",
+      "case_version": 1,
+      "target_commit_sha": "a8e7b2d639838954f599a1aa05490cbf2efe2a10",
+      "base_revision_sha": "2b1d11ae6c5a00a37706479a2741794ab1d64721",
+      "required_suite_ids": [
+        "tcp_endpoints"
+      ],
+      "focus_test": "test_loopback_detection_does_not_require_dns",
+      "rationale": "Loopback classification handles literals and localhost without resolving arbitrary hostnames.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "d826306c-9409-4207-880f-9bae91ccf4f4",
+        "coverage_artifacts_sha256": "efa43732b703432692f81f54f419b0b877c627c5586f2f0ea0cc19f2c894a03e",
+        "unavailable_suite_ids": [
+          "cli_configuration",
+          "relay_policies"
+        ],
+        "ast_graphs": [
+          {
+            "revision_sha": "2b1d11ae6c5a00a37706479a2741794ab1d64721",
+            "content_sha256": "3365dbfb63d682696aea144bafe746dce6a6c9b91dd6b6ea1cf703ec6d80300e"
+          },
+          {
+            "revision_sha": "a8e7b2d639838954f599a1aa05490cbf2efe2a10",
+            "content_sha256": "e94b8eb1ba9aacf72b23e8de044f935258fbfd881a0d5591887fbd199b504847"
+          }
+        ],
+        "impact_sha256": "4a0dbf062d949dc0cad2a9cbd6111fc3f25514add2e1b0b729d88e419321888e",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "230f3781ec9f94db0b7dea31da3d381330f25de0ca1c3097af576fafb0942cb6",
+        "eligible_issue_count": 98
+      },
+      "required_suites_without_parent_coverage": [],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 111,
+        "elapsed_seconds": 2.0956835839897394,
+        "python_version": "3.14.6",
+        "output_sha256": "8cf4175ee2e08040dc355d6ddea7c61e336394192d78327affa7ecb3ce68e83a",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/a8e7b2d639838954f599a1aa05490cbf2efe2a10.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G009",
+      "case_version": 1,
+      "target_commit_sha": "44824f6bf2907c783477bfb01cdc0e56fb3e8f4b",
+      "base_revision_sha": "a8e7b2d639838954f599a1aa05490cbf2efe2a10",
+      "required_suite_ids": [
+        "tcp_endpoints"
+      ],
+      "focus_test": "test_endpoint_network_membership",
+      "rationale": "Network membership respects IP versions, returns false for hostnames, and rejects invalid networks.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "b859f1b4-af14-4a75-9539-e93dc8859dda",
+        "coverage_artifacts_sha256": "d56e5ec38f4601072b98ccca422c2018a4d39c363925dfd28ec62ae558e46153",
+        "unavailable_suite_ids": [
+          "cli_configuration",
+          "relay_policies"
+        ],
+        "ast_graphs": [
+          {
+            "revision_sha": "a8e7b2d639838954f599a1aa05490cbf2efe2a10",
+            "content_sha256": "e94b8eb1ba9aacf72b23e8de044f935258fbfd881a0d5591887fbd199b504847"
+          },
+          {
+            "revision_sha": "44824f6bf2907c783477bfb01cdc0e56fb3e8f4b",
+            "content_sha256": "1b1e89ec6b97da341766f17788716a718082f673edd292466e8d8b0b29086713"
+          }
+        ],
+        "impact_sha256": "6d4010ecc364e5b91c1b93135f72afac5a1ad253b98307d0dd439288a16aca1f",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "368d666c723f16c8eb609ea53bf8ea8ccb66b8045574896695bbbbb465687c8a",
+        "eligible_issue_count": 99
+      },
+      "required_suites_without_parent_coverage": [],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 112,
+        "elapsed_seconds": 2.096205874811858,
+        "python_version": "3.14.6",
+        "output_sha256": "9303f775fb55bda121d57dd2f62593af6d14f5e3f5c404b40b4884bbb53ed3ed",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/44824f6bf2907c783477bfb01cdc0e56fb3e8f4b.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G010",
+      "case_version": 1,
+      "target_commit_sha": "063993e753498c128d93a2bc624eb90041104620",
+      "base_revision_sha": "44824f6bf2907c783477bfb01cdc0e56fb3e8f4b",
+      "required_suite_ids": [
+        "tcp_endpoints"
+      ],
+      "focus_test": "test_client_rejects_invalid_endpoint_and_response",
+      "rationale": "Client now constructs Endpoint and validates decoded response shape; invalid endpoint and array response must fail. TCP exchange remains a supplemental reference outside the catalog.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "386be5f2-de16-4459-ba38-febd4ba9a8e6",
+        "coverage_artifacts_sha256": "58604012d90e3b299c69222b85ed581b633b865e610044df6152a4f65611a9e2",
+        "unavailable_suite_ids": [
+          "cli_configuration",
+          "relay_policies"
+        ],
+        "ast_graphs": [
+          {
+            "revision_sha": "44824f6bf2907c783477bfb01cdc0e56fb3e8f4b",
+            "content_sha256": "1b1e89ec6b97da341766f17788716a718082f673edd292466e8d8b0b29086713"
+          },
+          {
+            "revision_sha": "063993e753498c128d93a2bc624eb90041104620",
+            "content_sha256": "947a19a1ff2938a41631f28ecef3741a04a88004f9e5e680869c2328989a35f6"
+          }
+        ],
+        "impact_sha256": "64a8ca609278b649b1cf9711ca26c9c994f59a4e6e88a90732a968823a1424bc",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "a382f4b5ec589736ea12fea356acd5805ff78c3951659ebedfe9703d1f2fc44d",
+        "eligible_issue_count": 100
+      },
+      "required_suites_without_parent_coverage": [],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 113,
+        "elapsed_seconds": 2.1225144579075277,
+        "python_version": "3.14.6",
+        "output_sha256": "f5aae6cdc62fd1ed4124db10b636ad8443252474b1b2bf297132d3bb2a28248b",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/063993e753498c128d93a2bc624eb90041104620.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G011",
+      "case_version": 1,
+      "target_commit_sha": "1a1efe1d264409e4b2fdc8c7181b384a2504c3f9",
+      "base_revision_sha": "063993e753498c128d93a2bc624eb90041104620",
+      "required_suite_ids": [
+        "cli_configuration"
+      ],
+      "focus_test": "test_cli_host_option_reaches_client_settings",
+      "rationale": "New CLI argument injection must pass host and port to client Settings; client is mocked, so endpoint suite does not assert this wiring.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "99f1f124-6dc5-4377-ad1a-a603be0bd126",
+        "coverage_artifacts_sha256": "64e2547f703a3a7b7c003d4f66633e71210fddac13c8ec55e6e16ef809dc659a",
+        "unavailable_suite_ids": [
+          "cli_configuration",
+          "relay_policies"
+        ],
+        "ast_graphs": [
+          {
+            "revision_sha": "063993e753498c128d93a2bc624eb90041104620",
+            "content_sha256": "947a19a1ff2938a41631f28ecef3741a04a88004f9e5e680869c2328989a35f6"
+          },
+          {
+            "revision_sha": "1a1efe1d264409e4b2fdc8c7181b384a2504c3f9",
+            "content_sha256": "a29c411f66f7e645aef181fb40bba9edbe95227536dcd5fa6099a8a42a99ac83"
+          }
+        ],
+        "impact_sha256": "a59d8c0e33959e124d2f803508de9a629a0318fc7e186e9c5f92891a9ab4d513",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "f143b9a38dd94692458f21ee800e9d7ff00d0ef486fb86ae5fee061803cec377",
+        "eligible_issue_count": 101
+      },
+      "required_suites_without_parent_coverage": [
+        "cli_configuration"
+      ],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 114,
+        "elapsed_seconds": 2.104782875161618,
+        "python_version": "3.14.6",
+        "output_sha256": "6f5136db9d8b3fa47263aadd8c4cdc31d05e15bc52d4962dfc58e9a9911ef157",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/1a1efe1d264409e4b2fdc8c7181b384a2504c3f9.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G012",
+      "case_version": 1,
+      "target_commit_sha": "7b02450c85ddee464a4b6cb14f0063a091255a0a",
+      "base_revision_sha": "1a1efe1d264409e4b2fdc8c7181b384a2504c3f9",
+      "required_suite_ids": [
+        "cli_configuration"
+      ],
+      "focus_test": "test_cli_transport_limits_are_validated",
+      "rationale": "CLI passes timeout/frame limits to Settings and preserves invalid-timeout rejection; unchanged Settings tests alone cannot assert CLI wiring.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "06c74cce-6249-44d6-8414-9af18875f1ce",
+        "coverage_artifacts_sha256": "80f6a930293a5a35860bd35d2e5943d57d23a229bfd058c7c7c0ef195b2bd6b0",
+        "unavailable_suite_ids": [
+          "relay_policies"
+        ],
+        "ast_graphs": [
+          {
+            "revision_sha": "1a1efe1d264409e4b2fdc8c7181b384a2504c3f9",
+            "content_sha256": "a29c411f66f7e645aef181fb40bba9edbe95227536dcd5fa6099a8a42a99ac83"
+          },
+          {
+            "revision_sha": "7b02450c85ddee464a4b6cb14f0063a091255a0a",
+            "content_sha256": "3dabb9ebcbe6360b49b77fd890a8f787d3313c9de3f208f5b76b4089637a45f4"
+          }
+        ],
+        "impact_sha256": "2759d1ed0d20254356b86f7fbc2a6a020016a2675eb2dd3bfa4a2856d852afd4",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "5a351cc6f67e57df58569b79bf7267983c92605d7c61c12c63deec0156be97d8",
+        "eligible_issue_count": 103
+      },
+      "required_suites_without_parent_coverage": [],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 115,
+        "elapsed_seconds": 2.1166827499400824,
+        "python_version": "3.14.6",
+        "output_sha256": "4bdc515d3df494df90e44e90397f87e2cf93aab76b3a7bac66bfe626145a4645",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/7b02450c85ddee464a4b6cb14f0063a091255a0a.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G013",
+      "case_version": 1,
+      "target_commit_sha": "aabca05908c3721ac9832e162819a4aeccfacdc0",
+      "base_revision_sha": "7b02450c85ddee464a4b6cb14f0063a091255a0a",
+      "required_suite_ids": [
+        "cli_configuration"
+      ],
+      "focus_test": "test_cli_routes_are_applied_before_server_startup",
+      "rationale": "CLI populates named routes before server construction and reports malformed route arguments; isolated route-table tests cannot verify CLI parsing.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "6b4cd8fb-cec0-4c97-847e-56909fada319",
+        "coverage_artifacts_sha256": "5721edca90bfb498b66065b5b06ba9f83ee10be7d4988ab68923919ba791fafb",
+        "unavailable_suite_ids": [
+          "relay_policies"
+        ],
+        "ast_graphs": [
+          {
+            "revision_sha": "7b02450c85ddee464a4b6cb14f0063a091255a0a",
+            "content_sha256": "3dabb9ebcbe6360b49b77fd890a8f787d3313c9de3f208f5b76b4089637a45f4"
+          },
+          {
+            "revision_sha": "aabca05908c3721ac9832e162819a4aeccfacdc0",
+            "content_sha256": "d32d1ecb6f7acd2c21156c8fdfaab23fc6200ff4d789e471213bfe93e02dac75"
+          }
+        ],
+        "impact_sha256": "0e266efc71dfe65366bd46d7045b108176d4c731ffaec3c5c2db57b1c5379715",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "ff857e4f620661a65e35bad9be2820b9b62dc7064ade1ccbdd5b2f09efd44777",
+        "eligible_issue_count": 104
+      },
+      "required_suites_without_parent_coverage": [],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 116,
+        "elapsed_seconds": 2.0986123748589307,
+        "python_version": "3.14.6",
+        "output_sha256": "9f2b6568ebc26c192c5f7234fcfd38092596d0d165c9698dffb24aea178f6f67",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/aabca05908c3721ac9832e162819a4aeccfacdc0.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G014",
+      "case_version": 1,
+      "target_commit_sha": "e1660e7597f2bac49f7363e790fd3f20112da961",
+      "base_revision_sha": "aabca05908c3721ac9832e162819a4aeccfacdc0",
+      "required_suite_ids": [
+        "cli_configuration"
+      ],
+      "focus_test": "test_cli_default_route_is_optional",
+      "rationale": "CLI installs a configured default and leaves fallback absent otherwise.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "825a150a-9d3d-4539-a991-ce8e1c01a21d",
+        "coverage_artifacts_sha256": "8918ee904f419d0b7d37f5ee560c78a51d0a46e357d9a8dec0f33ae916cee715",
+        "unavailable_suite_ids": [
+          "relay_policies"
+        ],
+        "ast_graphs": [
+          {
+            "revision_sha": "aabca05908c3721ac9832e162819a4aeccfacdc0",
+            "content_sha256": "d32d1ecb6f7acd2c21156c8fdfaab23fc6200ff4d789e471213bfe93e02dac75"
+          },
+          {
+            "revision_sha": "e1660e7597f2bac49f7363e790fd3f20112da961",
+            "content_sha256": "f7255797ef030873d8ff8d00341fa7d25b947ff1bc098859bbe601bf86b754c8"
+          }
+        ],
+        "impact_sha256": "938eb570e27057a4a8dd2eae37f7e2bc584313a18c4a9558921c2ad669606e5e",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "5b2ef299610301f5944957e69d9cf52b7ce66db1aeb86f03587e6854dfbdc9a7",
+        "eligible_issue_count": 105
+      },
+      "required_suites_without_parent_coverage": [],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 117,
+        "elapsed_seconds": 2.1204718751832843,
+        "python_version": "3.14.6",
+        "output_sha256": "a683c523fe247c9a41dab5429af4b5ea4a93a7b21c0d0c972a3c24b24ec04b71",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/e1660e7597f2bac49f7363e790fd3f20112da961.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G015",
+      "case_version": 1,
+      "target_commit_sha": "f7421d5b690a1d46c481c1c2c76445b5a9573e42",
+      "base_revision_sha": "e1660e7597f2bac49f7363e790fd3f20112da961",
+      "required_suite_ids": [
+        "cli_configuration"
+      ],
+      "focus_test": "test_cli_source_blocks_reach_relay_service",
+      "rationale": "Blocked-source CLI arguments must reach access rules and relay decisions, including allowed-source acceptance.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "4c49ed1c-54db-4713-b185-051036de63a3",
+        "coverage_artifacts_sha256": "6ed012d975ba8f8b0807dd00b74bae523ce65d1dfea6ffb7dadf732349bdbc28",
+        "unavailable_suite_ids": [
+          "relay_policies"
+        ],
+        "ast_graphs": [
+          {
+            "revision_sha": "e1660e7597f2bac49f7363e790fd3f20112da961",
+            "content_sha256": "f7255797ef030873d8ff8d00341fa7d25b947ff1bc098859bbe601bf86b754c8"
+          },
+          {
+            "revision_sha": "f7421d5b690a1d46c481c1c2c76445b5a9573e42",
+            "content_sha256": "3bf74131b46524426bcbd14b425b37b053817b00ac710f0a7902000add1497f6"
+          }
+        ],
+        "impact_sha256": "280567fe39b4b268c8182459f791827bc70c8fe92b6026f73fb25e9dcf3e6792",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "784a6b7643f2b4c3bab6a11e7653947c944099b5acc8898cc89b4967cf718ff3",
+        "eligible_issue_count": 106
+      },
+      "required_suites_without_parent_coverage": [],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 118,
+        "elapsed_seconds": 2.118928208015859,
+        "python_version": "3.14.6",
+        "output_sha256": "10a7e7366543fda395ee925e1bbda7da3eb80a9b62ca48bfe9e5b5246698131d",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/f7421d5b690a1d46c481c1c2c76445b5a9573e42.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G016",
+      "case_version": 1,
+      "target_commit_sha": "bd8cdc7e6980f6d9098fe29e4a56b6c6e9c457ad",
+      "base_revision_sha": "f7421d5b690a1d46c481c1c2c76445b5a9573e42",
+      "required_suite_ids": [
+        "relay_policies",
+        "cli_configuration"
+      ],
+      "focus_test": "test_optional_heartbeat_policy_gates_next_hop",
+      "rationale": "Relay policies assert heartbeat gating and rejection accounting. Existing CLI server-route/source-block assertions protect default RelayService construction and handling after the rejection refactor.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "d068f7fa-16e1-4f6c-bae5-18eff183d540",
+        "coverage_artifacts_sha256": "6698a7d6bd943391335b61f2ae55456dc889b5f6ee3ea6ea43a154c326052da6",
+        "unavailable_suite_ids": [
+          "relay_policies"
+        ],
+        "ast_graphs": [
+          {
+            "revision_sha": "f7421d5b690a1d46c481c1c2c76445b5a9573e42",
+            "content_sha256": "3bf74131b46524426bcbd14b425b37b053817b00ac710f0a7902000add1497f6"
+          },
+          {
+            "revision_sha": "bd8cdc7e6980f6d9098fe29e4a56b6c6e9c457ad",
+            "content_sha256": "19f7ee70db1e9f1ea6d3c2c2978456e584eb9ea852ca8e5a63dc91219f1370b1"
+          }
+        ],
+        "impact_sha256": "4ac332e32eea66bd985635e9976909845dc68571a75e4ddef0a15428063020d1",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "417a4ba8426c4bdc10b6deeb2cbea1a7778ff5553b32ae8b173d461447e45b71",
+        "eligible_issue_count": 107
+      },
+      "required_suites_without_parent_coverage": [
+        "relay_policies"
+      ],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 119,
+        "elapsed_seconds": 2.122272666078061,
+        "python_version": "3.14.6",
+        "output_sha256": "8272f7c2070884eeb3c1027fc178fd85e538e5c3dc9960b87d82246bf1755665",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/bd8cdc7e6980f6d9098fe29e4a56b6c6e9c457ad.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G017",
+      "case_version": 1,
+      "target_commit_sha": "568912b77ee422c6da26287b86fa71222761bdf1",
+      "base_revision_sha": "bd8cdc7e6980f6d9098fe29e4a56b6c6e9c457ad",
+      "required_suite_ids": [
+        "relay_policies",
+        "cli_configuration"
+      ],
+      "focus_test": "test_rate_limits_apply_only_to_eligible_requests",
+      "rationale": "Rate capacity must be consumed only for eligible requests and remain per source. CLI server assertions protect unchanged no-limiter defaults.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "bdddd518-cf74-48a8-8e1d-68428ff699d9",
+        "coverage_artifacts_sha256": "63f1be21bdcb3a20674e3444cdd78b375c2fec2dceb3fdbc6e4f59ed4712e516",
+        "unavailable_suite_ids": [],
+        "ast_graphs": [
+          {
+            "revision_sha": "bd8cdc7e6980f6d9098fe29e4a56b6c6e9c457ad",
+            "content_sha256": "19f7ee70db1e9f1ea6d3c2c2978456e584eb9ea852ca8e5a63dc91219f1370b1"
+          },
+          {
+            "revision_sha": "568912b77ee422c6da26287b86fa71222761bdf1",
+            "content_sha256": "5632a27e46864bef70718fdab28c8bb5c3d9ab968d520e2a94eb8357817e3c62"
+          }
+        ],
+        "impact_sha256": "43d8a6f030ab6faf0de72d72499cfbe967052732109a34f6bf2ec63be93f12a6",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "eb11c16f3265289a5906b46df42f4c49e2f0248a3717db7d36dd9c974cfe24b2",
+        "eligible_issue_count": 108
+      },
+      "required_suites_without_parent_coverage": [],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 120,
+        "elapsed_seconds": 2.1092163340654224,
+        "python_version": "3.14.6",
+        "output_sha256": "9c34600a76f11d0236dafce2ff451b60b1844b518e10032f2c4283359253f552",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/568912b77ee422c6da26287b86fa71222761bdf1.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G018",
+      "case_version": 1,
+      "target_commit_sha": "324bb6d5b6da82426f8223dda457b0dfe045c053",
+      "base_revision_sha": "568912b77ee422c6da26287b86fa71222761bdf1",
+      "required_suite_ids": [
+        "relay_policies",
+        "cli_configuration"
+      ],
+      "focus_test": "test_payload_policy_uses_bytes_and_preserves_rate_capacity",
+      "rationale": "Payload gating counts UTF-8 bytes and must precede rate consumption. CLI assertions retain no-payload-limit behavior.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "4ee4749a-f291-4060-8cf7-ef442f6e283e",
+        "coverage_artifacts_sha256": "6898d6c72000527e6e7d5fe9c154727f6cd529297c4c7e991ab00e3c5b343425",
+        "unavailable_suite_ids": [],
+        "ast_graphs": [
+          {
+            "revision_sha": "568912b77ee422c6da26287b86fa71222761bdf1",
+            "content_sha256": "5632a27e46864bef70718fdab28c8bb5c3d9ab968d520e2a94eb8357817e3c62"
+          },
+          {
+            "revision_sha": "324bb6d5b6da82426f8223dda457b0dfe045c053",
+            "content_sha256": "5b5c3353aa79a6aa31b1a97b4d6b2d3ca46302e2ac9a611a9085be567bae6957"
+          }
+        ],
+        "impact_sha256": "a3ec05ef47c9f9e92a23084222fb328c17b154fda3d385f2cee875695ec65143",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "5f81315ad171f3feafae5438f984f2ace0655151655c31c045d5cc9e9435a27b",
+        "eligible_issue_count": 110
+      },
+      "required_suites_without_parent_coverage": [],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 121,
+        "elapsed_seconds": 2.118375999853015,
+        "python_version": "3.14.6",
+        "output_sha256": "d82000b1dcf09b754e5fb679bd1c0299b5a45ae1c256aeddcf4d6780ffc99a83",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/324bb6d5b6da82426f8223dda457b0dfe045c053.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G019",
+      "case_version": 1,
+      "target_commit_sha": "c186df8645b9115b639be8b9728f2489b5c1f6d1",
+      "base_revision_sha": "324bb6d5b6da82426f8223dda457b0dfe045c053",
+      "required_suite_ids": [
+        "relay_policies",
+        "cli_configuration"
+      ],
+      "focus_test": "test_audit_covers_accepted_and_rejected_decisions",
+      "rationale": "Public handle wrapper must audit both outcomes without payload disclosure. CLI source-block and route assertions exercise the refactored public handle with audit disabled.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "c29a3f34-a790-4818-a359-06792535aa9c",
+        "coverage_artifacts_sha256": "9559a09b9c8918c11784a08a2da7b5e53b21f8ed01cc20ac8d14ba05af6349a8",
+        "unavailable_suite_ids": [],
+        "ast_graphs": [
+          {
+            "revision_sha": "324bb6d5b6da82426f8223dda457b0dfe045c053",
+            "content_sha256": "5b5c3353aa79a6aa31b1a97b4d6b2d3ca46302e2ac9a611a9085be567bae6957"
+          },
+          {
+            "revision_sha": "c186df8645b9115b639be8b9728f2489b5c1f6d1",
+            "content_sha256": "fc45cf6f7fb03c5f7427920d4c539fafbb5602ece4fa108476047203c3eba3f0"
+          }
+        ],
+        "impact_sha256": "405ba8bbccd0f5b050a5c15521c7fb3e5b10a60ac7df5e05bb97fab1e995ef9f",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "bf359502accb3d3fd26b6deb6e657377c3c2e2a99d30f641c82b718089700d7e",
+        "eligible_issue_count": 112
+      },
+      "required_suites_without_parent_coverage": [],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 122,
+        "elapsed_seconds": 2.119424874894321,
+        "python_version": "3.14.6",
+        "output_sha256": "5e8dda312871bdecbf00080ac122b5646834c2f26fb9fa3cd88d69f8cf8eb44d",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/c186df8645b9115b639be8b9728f2489b5c1f6d1.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    },
+    {
+      "case_id": "G020",
+      "case_version": 1,
+      "target_commit_sha": "cc5afe39cab1b0694dd24a8a0d428c317a03ad27",
+      "base_revision_sha": "c186df8645b9115b639be8b9728f2489b5c1f6d1",
+      "required_suite_ids": [
+        "relay_policies",
+        "cli_configuration"
+      ],
+      "focus_test": "test_cidr_fallback_obeys_named_routes_and_optional_policies",
+      "rationale": "CIDR fallback must respect named-route precedence and heartbeat/audit policies. CLI assertions preserve named/default routes with prefix fallback disabled. Combined TCP policies are supplemental reference tests outside the catalog.",
+      "evidence": {
+        "policy_version": "rolling-parent-v1",
+        "coverage_run_id": "5d48e092-34db-4045-a328-ae6b05f7c348",
+        "coverage_artifacts_sha256": "b8bbd62104891f8a1fb35f95cae2dafa671fb080c63948c26a428ef515e7798b",
+        "unavailable_suite_ids": [],
+        "ast_graphs": [
+          {
+            "revision_sha": "c186df8645b9115b639be8b9728f2489b5c1f6d1",
+            "content_sha256": "fc45cf6f7fb03c5f7427920d4c539fafbb5602ece4fa108476047203c3eba3f0"
+          },
+          {
+            "revision_sha": "cc5afe39cab1b0694dd24a8a0d428c317a03ad27",
+            "content_sha256": "41a25b92ad6b21b8f81d1652104d983bfe1c47f55e13cd564bc0914f5ad03cb1"
+          }
+        ],
+        "impact_sha256": "f110ac0a380b676fafde7cfcc2d453bf311ac03aa128067e8c7922b0c7dbed71",
+        "analyzer_version": "python-static-v1",
+        "issue_dataset_sha256": "12e47c0e5af647bbe0557ce47377f54cd13b9ccc151f834f9ec141905caf1659",
+        "issue_generator_version": "historical-issues-v1",
+        "eligible_issue_records_sha256": "075c9fea17880503a247686a9eaddaf3c19149ace05af4713a8cdc95ec0bd1e5",
+        "eligible_issue_count": 114
+      },
+      "required_suites_without_parent_coverage": [],
+      "reference_run": {
+        "passed": true,
+        "test_case_count": 124,
+        "elapsed_seconds": 2.623970167012885,
+        "python_version": "3.14.6",
+        "output_sha256": "f0ced820f0666d035713b3675cc251cc60178c889101ee9708a094d1ce476e18",
+        "output_path": "/Users/adithya/Desktop/Personal_Projects/test_recommendation_system/artifacts/evaluation/golden-v1/cc5afe39cab1b0694dd24a8a0d428c317a03ad27.reference.txt",
+        "scope": "full unittest discovery including tests outside the recommendation catalog"
+      }
+    }
+  ]
+}

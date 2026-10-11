@@ -313,7 +313,7 @@ and final snapshot (20 suites, 110 cases). Both passed and persist raw artifacts
 line/branch mappings, runtime measurements, and revision provenance in MySQL.
 Snapshot evidence is diagnostic only. Six later suites have no training-cutoff
 coverage; this is an explicit evidence gap. Function coverage is not yet measured.
-Correlated synthetic Jira/Bugzilla evidence and retrieval are still pending.
+Correlated synthetic Jira/Bugzilla evidence is implemented; retrieval remains pending.
 
 - Chunk source and test files.
 - Generate embeddings and load ChromaDB.
@@ -507,7 +507,7 @@ evaluation commit's exact parent, persist target/base/run/catalog links under
 immutable and verified on rerun. This rolling policy may use earlier evaluation
 changes after they land; report its scores separately from fixed-training scores.
 Historical measurements are reconstructed using recorded current tooling.
-Golden-label review, AST/call graph expansion, and new-code fallback remain pending.
+Golden-label review and AST/call graph expansion are implemented below; new-code fallback remains pending.
 
 ### Revision-specific static impact analysis
 
@@ -518,7 +518,7 @@ and import dependencies up to three hops. Preserve unresolved calls and added/
 removed symbols. Migration 4 retains revision/version/checksum provenance.
 Static resolution is approximate; dynamic dispatch/inheritance and complex
 binding need future improvements. Candidate lookup through pinned parent
-coverage, new-code fallback, and independent golden review remain pending.
+coverage and new-code fallback remain pending; the golden review is recorded below.
 
 ### Synthetic issue evidence
 
@@ -531,4 +531,24 @@ availability where possible. Migration 5 retains dataset/checksum provenance;
 transactional imports verify immutable mappings and do not duplicate on rerun.
 Rolling and fixed-training availability policies are explicit. These fixtures
 exercise evidence retrieval, not genuine bug/failure ground truth. Candidate
-retrieval integration and golden review remain pending.
+retrieval integration remains pending; golden review is recorded below.
+
+### Step 3 release: reviewed golden dataset and evidence audit
+
+Initial preparation is complete. `evals/golden_review_v1.json` contains an
+agent source/assertion review; `evals/golden_dataset_v1.json` freezes 20 case
+versions with minimum-required suites, rolling-parent evidence, reference
+results, and hashes. Review attribution is Codex; human approval is not claimed.
+Four cases explicitly lack parent coverage for their introduced primary suite.
+Five relay-policy cases require both relay policy and CLI default regressions.
+Full reference runs (including out-of-catalog tests) pass at all 20 targets:
+2,271 test executions. This is a behavioral oracle, not fault-detection truth.
+
+`test_recommendation.golden` validates actual Git parents, catalog/history,
+suite/method presence, coverage artifacts and mappings, graph provenance,
+synthetic issue lookup rows/availability, and reference output hashes. Migration
+6 stores immutable dataset JSON/checksums. Existing v1 releases are validated,
+not overwritten. New cases/corrections require explicitly versioned releases.
+Candidate generation, fallback for new code, LLM selection, and scoring remain
+in the recommendation/evaluation execution stages. Human review and broader
+fault-bearing scenarios can strengthen later releases. See `evals/README.md`.
