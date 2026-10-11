@@ -344,3 +344,42 @@ and later changes; do not use target call edges as pre-change evidence.
 Next, candidate retrieval must join impacted parent files/lines to the matching
 case's parent coverage run, retain technical reasons, and explicitly handle
 unavailable suites and new code. AST graphs alone do not establish golden answers.
+
+## Synthetic Jira and bug evidence
+
+```bash
+python -m test_recommendation.synthetic_issues --product-repo ../test_recommendation_product
+```
+
+Generator `historical-issues-v1` links a changed production file to a changed
+catalog test module only when that historical test directly imports the source
+module and its suite exists at that revision. It uses actual Git diffs and test
+source, not intended-suite labels or final-snapshot ownership descriptions.
+The initial dataset contains 100 Jira mapping rows and 17 bug mapping rows,
+representing all 100 evolution commits. Jira work items cover all matched
+changes; fictional regression scenarios cover validation/integration changes.
+All rows and summaries explicitly identify the records as synthetic. They are
+not imported from real trackers and do not establish fault-detection truth.
+
+Jira links become available when the linked change lands. Bug links become
+available one revision later when a later revision exists; creation timestamps
+are fictional commit-derived dates, while the availability revision determines
+when the complete code/suite link may be retrieved. Evidence for a change can
+therefore come from earlier changes, not its own newly generated issue links.
+Creation time alone must not override link availability.
+
+The command validates source paths and suite presence at both linked and
+availability revisions, validates introduction ancestry, and transactionally
+inserts or verifies immutable rows under a database lock. Migration 5 stores
+versioned dataset provenance and a SHA-256 checksum. Repeated runs do not add
+mapping duplicates; changed generation inputs require an explicit new version
+and mapping-identity strategy, rather than silently overwriting existing links.
+
+Artifacts are `artifacts/issues/historical-issues-v1/dataset.json` and
+`evaluation_availability.json`. The latter records eligible link counts at the
+20 evaluation parents. `available_records` supports `rolling-parent-v1` and
+`fixed-training-v1` policies using validated linear corpus ancestry. For rolling
+case exports, records must also reference paths and suites present at the parent.
+Future recommendation queries must enforce the same availability, catalog, and
+path/suite checks when reading MySQL mappings. Issue evidence is not automatically
+a golden answer; independent review and candidate retrieval remain pending.

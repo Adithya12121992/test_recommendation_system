@@ -519,3 +519,16 @@ removed symbols. Migration 4 retains revision/version/checksum provenance.
 Static resolution is approximate; dynamic dispatch/inheritance and complex
 binding need future improvements. Candidate lookup through pinned parent
 coverage, new-code fallback, and independent golden review remain pending.
+
+### Synthetic issue evidence
+
+Implemented `test_recommendation.synthetic_issues`, generator
+`historical-issues-v1`: 100 Jira links and 17 fictional bug links based on
+historical source/test co-changes plus direct test imports. No expected-suite
+labels are used. Validate linked/available revisions, source paths, suite
+presence, and introduction ancestry. Bug links have one-revision delayed
+availability where possible. Migration 5 retains dataset/checksum provenance;
+transactional imports verify immutable mappings and do not duplicate on rerun.
+Rolling and fixed-training availability policies are explicit. These fixtures
+exercise evidence retrieval, not genuine bug/failure ground truth. Candidate
+retrieval integration and golden review remain pending.

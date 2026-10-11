@@ -72,7 +72,7 @@ def initialize(config):
                     version INT PRIMARY KEY, checksum CHAR(64) NOT NULL,
                     status ENUM('applying','applied') NOT NULL, applied_at DATETIME(6) NULL
                 ) ENGINE=InnoDB""")
-                for name in ('001_initial.sql', '002_feedback.sql', '003_case_coverage.sql', '004_ast_graphs.sql'):
+                for name in ('001_initial.sql', '002_feedback.sql', '003_case_coverage.sql', '004_ast_graphs.sql', '005_synthetic_issues.sql'):
                     version = int(name.split('_')[0])
                     sql = files('test_recommendation').joinpath('sql/' + name).read_text()
                     checksum = hashlib.sha256(sql.encode()).hexdigest()
