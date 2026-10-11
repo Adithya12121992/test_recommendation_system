@@ -82,9 +82,11 @@ def download_extract(client, reference):
     files=list(commit['files'])
     page=2
     while len(commit['files'])==100:
-        require(page<=30,'Commit exceeds supported GitHub file pagination limit')
+        require(page<=31,'Commit exceeds supported GitHub file pagination limit')
         commit=client.get(f'commits/{target}?per_page=100&page={page}')
         require(commit['sha']==target,'GitHub pagination changed target revision')
+        if page==31:
+            require(not commit['files'],'Commit exceeds supported GitHub file pagination limit')
         files.extend(commit['files'])
         page+=1
     # TemporaryDirectory removes the downloaded diff on success AND exceptions.

@@ -584,3 +584,62 @@ and existing static-analysis limitations are explicit. Simulated API tests cover
 success, cleanup on failure, missing diff files, and merge rejection. Live product verification succeeds
 with the updated token. GitHub metadata snippets can have different context,
 so the downloaded full diff is authoritative.
+
+### Open PR acquisition
+
+Implemented `test_recommendation.pull_request --pr <url>`: pin base/head repos
+and SHAs, resolve merge base, acquire paginated PR files, download a pinned
+merge-base/head comparison, and reuse temporary diff/AST/impact processing.
+Fork and multi-commit PRs (including merge-commit heads) are supported. Recheck
+PR identity before/after processing and reject moving/closed PRs. Preserve
+provenance in stage outputs; existing offline expansion can replay them.
+No repository writes or PR creation. Fixture tests cover fork routing, same-repo
+pagination, multi-commit comparison, and revision races. Live same-repository PR #1 is verified end-to-end: three changed files, two
+changed definitions, three impacted source files, matching offline replay, and
+verified raw diff cleanup. PR #1 is the default future testing fixture. Arbitrary source scopes and GitHub Enterprise
+remain outside current adapter scope. Next: eligible evidence retrieval.
+
+### Recommendation chunks 3–4 and PR visibility
+
+Implemented `test_recommendation.evidence`: validate stage identity, retrieve
+base-compatible measured coverage, ancestral/available synthetic issues, and
+reviewed context-matched feedback; retain all inclusion/exclusion decisions.
+Reuse non-base coverage only for an ancestor with identical full source/test
+subtrees. Validate report/artifact/mapping consistency. Candidate generation
+combines file-level measured hits, issues, and protected direct catalog-path
+fallback; verify candidate test classes/methods at the pinned target. Golden
+labels are never inputs. Store checksummed artifacts locally and through
+migration 7 `pipeline_stage_artifacts`.
+
+PR #1 yields five coverage hits, twelve issue matches, and two candidates:
+`tcp_endpoints` and `cli_configuration`. Ranking/LLM/execution remain pending.
+Live feedback cutoff is retrieval time; strict historical replay remains a
+separate policy. Coverage matching is file-level and snapshot metadata fallback
+is explicitly approximate.
+
+`--comment-pr` prepares full per-stage logs and creates/updates a single owned
+marker comment, preserving unrelated comments. Check PR identity before posting;
+subsequent serialized runs replace the same comment. No webhook trigger yet.
+Publishing and subsequent editing are verified with the updated token on
+[PR #1](https://github.com/Adithya12121992/test_recommendation_product/pull/1#issuecomment-6110316191).
+Both requests used the same comment ID; exactly one owned pipeline comment was
+present, and the published body matched the complete local log.
+
+### Candidate ranking and Claude selection implemented
+
+Two additional revision-pinned, checksummed stages are stored locally and in
+MySQL: `candidate_ranking` and `claude_selection`. Ranking exposes its untuned
+technical components and bounded ±5-point feedback adjustment; repeated links
+cannot inflate scores. The configurable Claude Messages API receives evidence
+and current target test names with structured output, never golden answers.
+Selection validates every candidate decision, retains protected suites and
+represented measured source paths, and conservatively retains all on evidence
+gaps or API/validation failure. Test execution is a separate pending stage.
+
+Live PR #1 verification completed: endpoint suite 100, CLI suite 80; Claude
+retained both, totaling 11 target tests, with no reduction or guardrail override.
+The existing PR comment now includes source-by-source suite evidence, individual
+head-revision test names, ranking components, and Claude decisions. Suite-level
+coverage remains distinct from individual test availability. All 76 tests passed,
+including the local MySQL checks. Scoring calibration, golden selection replay,
+execution, and automatic PR triggering remain pending.

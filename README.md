@@ -506,3 +506,169 @@ tokens need private-repository access when the repository is private. Unsupporte
 merge/root commits, truncated trees, oversized API responses, missing files in the downloaded diff, and incomplete file pagination fail explicitly. Errors do not print
 credentials. Live target-repository verification succeeds with the updated token.
 The remote cleanup and analysis flow is also covered by simulated API tests.
+
+## Open GitHub PR input
+
+```bash
+python -m test_recommendation.pull_request \
+  --pr https://github.com/OWNER/REPOSITORY/pull/NUMBER \
+  --output artifacts/pipeline/pr_example/change.json
+```
+
+This read-only adapter accepts an open PR URL, including drafts, and pins its
+base-tip SHA, head SHA, and merge-base SHA. Analysis compares **merge base to
+head**, not the head commit's first parent. Multi-commit PRs and merge commits
+in the head are supported. Fork heads fetch source from the head repository;
+base/merge-base source comes from the base repository. The pinned cross-fork
+comparison uses GitHub's repository-network compare API.
+
+Changed-file metadata is paginated and checked against the PR file count. The
+raw comparison diff is fetched using pinned revisions rather than a moving PR
+diff URL, processed temporarily, then deleted. The PR identity is rechecked
+before source processing and after analysis. If base/head moves or the PR closes,
+the run fails without publishing stage outputs; rerun for the latest snapshot.
+This guard detects changes during acquisition, but does not keep a completed
+result current if someone pushes after completion. Completed results are explicitly
+revision-pinned. Derived outputs include `pull_request` provenance, the merge-base
+parent graph, and traced impact. Existing `github_pipeline expand` can replay them
+without network access. No PR comments, branches, clones, or test runs are created.
+
+Fine-grained tokens need Pull requests: read and Contents: read, with access to
+both repositories when required. GitHub public URLs only are currently supported;
+root/commit-only restrictions in the separate commit adapter do not apply to PR
+comparison mode. Missing fork repositories/access, API file/size/tree limits,
+unsupported paths, and inconsistent revisions fail explicitly. Source analysis
+still uses this corpus's `src/mesh_harbor/` layout; arbitrary project layouts need
+configurable scope before meaningful call-graph results can be promised.
+
+Fork/multi-commit acquisition, pagination, same-repository comparisons, and moving/
+closed PR rejection are tested with API fixtures. Live acquisition is verified against the default testing PR,
+https://github.com/Adithya12121992/test_recommendation_product/pull/1.
+It produced three changed files, two changed definitions, and three impacted
+production files (endpoint, client, CLI). Pinned head `6b6b23d` and merge base
+`990de4a` were consistent; offline expansion replay matched and raw diff cleanup
+was verified. Artifacts are under `artifacts/pipeline/pr_1/`. Each future run
+resolves and pins the PR revisions again. Live fork/multi-commit examples remain
+fixture-tested rather than validated against this single-commit same-repo PR.
+
+## Evidence retrieval and candidate generation
+
+```bash
+python -m test_recommendation.evidence \
+  --change artifacts/pipeline/pr_1/change.json \
+  --comment-pr
+```
+
+The retrieval stage verifies extraction/impact identity and looks up MySQL
+coverage, issue links, and feedback without consulting golden answers. Current
+catalog scope is the product repository. Live coverage is eligible only if it
+passed and was measured at the base, or at an ancestor whose complete `src` and
+`tests` Git subtree hashes match the base. Other coverage runs retain explicit
+exclusion reasons. Raw report/artifact checksums and mapping completeness are
+checked before use. This byte-compatibility policy suits the current stdlib
+corpus; production dependency/config/environment compatibility needs additional
+checks. Fixed-training evaluation must keep its stricter evidence boundary and
+must not use this live policy as a substitute.
+
+For PR #1, only final-snapshot coverage at `cc5afe3` is compatible with base
+`990de4a`. Retrieval finds five nonzero file-coverage matches and twelve fictional
+issue matches. Coverage matching is conservative at file level, not proof that
+every changed function is exercised. Issues must be ancestral, available, and
+reference an available suite and impacted source path. Reviewed feedback must
+precede retrieval time, match historical impacted paths and available suites,
+and be deduplicated per reviewer/change/suite. Only relevance/failure-detection
+accept/reject/add feedback is retained; cost-only and uncertain votes do not
+change relevance. Historical feedback replay requires a separate historical
+cutoff policy; this command is the live recommendation stage.
+
+Candidate generation combines evidence by suite and applies an explicitly
+labeled catalog-path fallback for directly changed owned paths. Direct fallbacks
+are protected for future selection; snapshot ownership is not fabricated
+coverage. Feedback attaches to existing candidates and does not create suites.
+Candidate test classes/methods are verified at the pinned head using hashed
+GitHub blobs, including fork routing. Missing targets become gaps and are
+excluded. Verification proves structural availability, not test success.
+
+Current PR candidates are `tcp_endpoints` (six methods at head) and
+`cli_configuration` (five methods). Runtime values come from individual coverage
+runs and include instrumentation overhead; they are not exact execution savings.
+Ranking, Claude reduction, and selected-suite execution have not run. Local
+checksummed `evidence.json` and `candidates.json` record audits, provenance,
+reasons, timings, and gaps. Migration 7 stores immutable payload versions in
+`pipeline_stage_artifacts`, allowing multiple retrieval snapshots per run ID.
+PR SHAs are external provenance and do not alter the frozen corpus commits.
+
+`--comment-pr` publishes the full prepared stage log on the PR. A marker plus
+comment-author identity discovers an existing pipeline comment, even when local
+artifacts are absent, and subsequent serialized runs edit that same comment.
+Unrelated comments are untouched. The log includes completed/pending stages,
+pinned revisions, affected files/traces, candidate reasons, and evidence
+inclusion/exclusion decisions. The latest run replaces the previous body;
+versioned full artifacts remain locally and in MySQL. No credentials/raw source
+patches are posted. A size guard rejects oversized logs rather than silently
+truncating them. The command verifies the PR has not moved before posting.
+This is explicit CLI execution; a GitHub webhook/Action trigger is not yet wired.
+
+Publishing requires Issues: write or Pull requests: write. With the updated
+token, publishing and editing were verified on [PR #1's pipeline comment](https://github.com/Adithya12121992/test_recommendation_product/pull/1#issuecomment-6110316191).
+Both requests returned the same comment ID, and exactly one owned pipeline
+comment was present. The full log is also saved in
+`artifacts/pipeline/pr_1/pr_log.md`. Evidence and candidates remain saved if
+commenting fails.
+
+### Candidate ranking and Claude selection
+
+After evidence retrieval, run:
+
+```bash
+.venv/bin/python -m test_recommendation.selection \
+  --change artifacts/pipeline/pr_1/change.json --comment-pr
+```
+
+The command saves `ranking.json` and `selection.json` with checksums locally and
+in MySQL `pipeline_stage_artifacts`. It verifies upstream artifact linkage and
+pinned revisions. No clone or test execution is involved. `ANTHROPIC_API_KEY`
+comes from the environment or ignored `.env`; `ANTHROPIC_MODEL` or `--model`
+overrides the default `claude-sonnet-4-6`. The implementation uses the
+[Claude Messages API with structured JSON output](https://platform.claude.com/docs/en/build-with-claude/structured-outputs).
+
+Ranking is an initial, untuned heuristic, not a calibrated probability:
+
+| Component | Points |
+| --- | --- |
+| Measured coverage | 50 / (1 + nearest measured impact distance) |
+| Impact proximity | 20 / (1 + nearest measured impact distance) |
+| At least one historical Jira link | 10 |
+| At least one historical bug link | 15 |
+| Protected direct catalog-path fallback | 5 |
+| Approved relevant feedback | At most ±5, with neutral-prior smoothing |
+
+Repeated coverage/issue links do not multiply a component. Without measured
+coverage, coverage and proximity contribute zero. Runtime is supplied as context
+rather than added to relevance scores. Feedback cannot create candidates or
+remove protection. File-level coverage may reflect imports; these scores have
+not yet been validated against the golden benchmark.
+
+Claude receives candidate evidence, scores, target test methods, impact traces,
+evidence gaps, and changed-definition metadata. Golden expected answers,
+credentials, and raw source patches are excluded. Every candidate must receive
+exactly one validated decision. The selector restores protected suites and any
+suite needed to preserve represented measured source paths. Evidence gaps or an
+empty choice retain all candidates. API failures, refusals, truncated responses,
+or invalid/unknown/duplicate suite decisions save an explicit conservative
+fallback and return a nonzero exit code. There is no automatic API retry.
+
+PR #1 was successfully evaluated: `tcp_endpoints` scored 100 and
+`cli_configuration` scored 80. Claude retained both suites (6 + 5 tests), with
+no guardrail overrides and no suite reduction. This is a selection result;
+execution and fault-detection evaluation remain future stages. The same PR
+comment now lists all retrieved suite links separately for measured coverage,
+synthetic Jira, synthetic bugs, reviewed feedback, and catalog fallback, plus
+individual test names verified at the PR head. Those names are not per-test
+coverage measurements. Detailed exclusion decisions remain in the expandable
+log section. Oversized comments still fail explicitly rather than truncate.
+
+Verification: 76 tests passed, including MySQL integration checks and cases for
+bounded feedback, duplicate evidence, protected suites, measured-path
+preservation, valid reduction, malformed decisions, API failure, truncation,
+evidence gaps, and revision mismatch.
