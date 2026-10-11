@@ -307,3 +307,40 @@ at the historical commit time; external dependencies and services would also
 need reproducible fixtures in a production replay. Rolling links permit evidence
 only for their recorded target; the original fixed-cutoff eligibility flags
 remain separate.
+
+## Revision-specific AST and call graphs
+
+```bash
+python -m test_recommendation.impact_graph --product-repo ../test_recommendation_product
+```
+
+Analyzer `python-static-v1` parses production Python files without importing or
+executing them. It stores module/class/function definitions, source ranges, AST
+fingerprints, resolved call sites, import dependencies, and unresolved calls.
+Resolution covers direct/local calls, import aliases and relative imports,
+constructors, `self`/`cls` methods, annotated arguments, and simple typed instance
+assignments. This is a best-effort static graph: dynamic dispatch, inheritance,
+reflection, complex assignments, and scope-sensitive alias/shadowing behavior
+are not fully modeled. Unresolved calls include external and builtin calls too.
+A resolved edge is a static hypothesis, not proof of runtime execution.
+
+For each reserved evaluation change, compare parent and target ASTs to identify
+changed definitions, including additions and removals. Use the actual source-file
+diff too, so comments and non-Python source changes retain file impact. Expand
+reverse calls and reverse import dependencies using **only the parent graph**,
+with a maximum of three hops. Record symbol and file distances independently;
+class/module fingerprints can conservatively broaden impact. Newly added symbols
+have no parent callers; file dependencies provide a fallback signal, not a
+complete guarantee. No expected-suite labels enter this analysis.
+
+Migration 4 adds `ast_graphs` and `ast_impacts`. Graphs are keyed by corpus,
+revision, and analyzer version, and impacts record the exact base and target.
+JSON payloads have SHA-256 checksums; reruns reject changed payloads under an
+existing analyzer version. Local files live under
+`artifacts/ast/python-static-v1/`, including an `index.json`. The initial batch
+contains 21 graphs and 20 impact reports. Target graphs support diff analysis
+and later changes; do not use target call edges as pre-change evidence.
+
+Next, candidate retrieval must join impacted parent files/lines to the matching
+case's parent coverage run, retain technical reasons, and explicitly handle
+unavailable suites and new code. AST graphs alone do not establish golden answers.

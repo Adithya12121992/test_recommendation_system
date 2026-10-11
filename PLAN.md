@@ -508,3 +508,14 @@ immutable and verified on rerun. This rolling policy may use earlier evaluation
 changes after they land; report its scores separately from fixed-training scores.
 Historical measurements are reconstructed using recorded current tooling.
 Golden-label review, AST/call graph expansion, and new-code fallback remain pending.
+
+### Revision-specific static impact analysis
+
+Implemented `test_recommendation.impact_graph` with analyzer `python-static-v1`:
+21 graphs and 20 impact reports for evaluation parents/targets. Compare AST
+fingerprints and actual source-file diffs, then traverse parent reverse calls
+and import dependencies up to three hops. Preserve unresolved calls and added/
+removed symbols. Migration 4 retains revision/version/checksum provenance.
+Static resolution is approximate; dynamic dispatch/inheritance and complex
+binding need future improvements. Candidate lookup through pinned parent
+coverage, new-code fallback, and independent golden review remain pending.
