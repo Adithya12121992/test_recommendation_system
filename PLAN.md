@@ -552,3 +552,35 @@ not overwritten. New cases/corrections require explicitly versioned releases.
 Candidate generation, fallback for new code, LLM selection, and scoring remain
 in the recommendation/evaluation execution stages. Human review and broader
 fault-bearing scenarios can strengthen later releases. See `evals/README.md`.
+
+### Recommendation chunks 1–2
+
+Implemented independently runnable `change_pipeline extract` and `expand` stages.
+Extraction records exact base/target, Git statuses including renames/deletions,
+source diff ranges, changed definitions, and graph fingerprints. Expansion
+verifies extraction/parent graph provenance and saves bounded reverse-call/import
+traces, distances, unresolved calls, and new-symbol gaps. Shared run IDs and
+checksummed JSON allow replay without rebuilding upstream selection stages.
+No PAT, Claude API key, golden labels, or issue mappings are used. Initial scope
+is this corpus's production source; merge analysis defaults to first parent.
+Stage artifacts are local; frozen database graphs/datasets remain unchanged.
+Next: eligible evidence lookup, new-code fallback, and candidate generation.
+
+Change extraction v2 retains full and per-file readable unified patch artifacts,
+with relative references and checksums. Impact-stage replay verifies them;
+legacy v1 extraction artifacts remain supported. Raw diffs are now inspectable
+independently of the JSON summaries. Binary changes have Git notices rather
+than text hunks; production-only impact seeding remains unchanged.
+
+### Remote acquisition and temporary diff lifecycle
+
+Implemented `github_pipeline extract|expand|run` for GitHub API acquisition with
+no local clone. Download commit diff temporarily, parse authoritative downloaded file patches/ranges,
+retain derived summaries/checksums, and delete raw diff on success or failure.
+Fetch parent/target production blobs in memory for ASTs; retain only the derived
+parent graph for independent expansion replay. Token read from ignored env;
+Claude is unused. Single-parent commit scope, tree/response/pagination limits,
+and existing static-analysis limitations are explicit. Simulated API tests cover
+success, cleanup on failure, missing diff files, and merge rejection. Live product verification succeeds
+with the updated token. GitHub metadata snippets can have different context,
+so the downloaded full diff is authoritative.

@@ -412,3 +412,97 @@ See [evaluation notes](evals/README.md) for scope and portability limits. These
 fault detection or comprehensive suite relevance. Golden labels are forbidden
 as retrieval evidence. Candidate retrieval, new-code fallback, LLM reduction,
 and performance scoring remain next.
+
+## Debuggable change extraction and impact expansion
+
+These local stages need neither a GitHub PAT nor a Claude key. They do not read
+`.env`, contact GitHub, or invoke an LLM.
+
+```bash
+python -m test_recommendation.change_pipeline extract \
+  --product-repo ../test_recommendation_product \
+  --target corpus-v1-snapshot \
+  --output artifacts/pipeline/example/change.json
+
+python -m test_recommendation.change_pipeline expand \
+  --product-repo ../test_recommendation_product \
+  --input artifacts/pipeline/example/change.json \
+  --hops 3 \
+  --output artifacts/pipeline/example/impact.json
+```
+
+Extraction resolves immutable SHAs, defaults to the first parent, and verifies
+ancestry. An explicit `--base <ancestor-sha>` supports a larger comparison.
+Merge targets are flagged; this is a first-parent comparison, not merge-base
+PR analysis. Root commits need an explicit existing base. NUL-delimited Git
+status parsing retains additions, deletions, and rename paths, including spaces.
+Production changes carry zero-context old/new diff ranges and patch hashes.
+Changed functions/classes carry before/after ranges and AST hashes; source paths
+remain recorded even when only formatting or comments changed. Non-production
+file names are metadata only, not impact-expansion seeds. Source scope currently
+matches this corpus (`src/mesh_harbor/`).
+
+Expansion accepts the saved extraction artifact, verifies its checksum, rebuilds
+its pinned parent graph, and checks the graph checksum/version. It traverses
+reverse calls and reverse imports separately, up to three hops. Each affected
+symbol/file retains its distance and a deterministic shortest trace with call
+line numbers or import relationships. Other equally short paths are not listed.
+Unresolved calls in affected code and newly added symbols are explicit gaps.
+Parent callers are never fabricated for a new target symbol. Both stages share
+a run ID and stage/analyzer versions. Their JSON envelopes have payload hashes.
+
+Default extraction output is `artifacts/pipeline/<run-id>/change.json`; expansion
+writes an adjacent `impact.json`. Use separate `--output` paths when comparing
+hop settings. These new stage traces are local artifacts; existing frozen AST
+graphs remain in MySQL. The stages do not modify the golden release, inspect
+expected labels, or perform coverage lookup, candidate selection, or execution.
+Current static analyzer limitations still apply.
+
+Extraction stage `change-impact-v2` also saves a readable `change.patch` covering
+all changed files and numbered `diffs/*.patch` for individual files, alongside
+`change.json`. Its `diff_artifact` references give relative paths and SHA-256
+checksums. These unified diffs include three context lines and show removed (`-`)
+and added (`+`) code. The zero-context ranges remain separate for analysis.
+Expansion verifies the saved patches before replay; legacy v1 artifacts remain
+supported. Binary files receive Git's binary-change notice rather than a textual
+code diff. Test/docs patches are available for inspection but do not seed impact
+expansion. Local Git calculates these patches from pinned revisions; downloading
+from GitHub is unnecessary when both revisions are already present locally.
+
+## Remote GitHub acquisition without a clone
+
+```bash
+python -m test_recommendation.github_pipeline run \
+  --repository Adithya12121992/test_recommendation_product \
+  --target cc5afe39cab1b0694dd24a8a0d428c317a03ad27 \
+  --output artifacts/pipeline/github_example/change.json
+```
+
+This mode reads `GITHUB_TOKEN` from the ignored `.env` or environment and calls
+GitHub REST directly. It resolves a single-parent commit, paginates changed-file
+metadata, downloads the full diff into a temporary directory, parses hunk ranges,
+and parses per-file hunks from that downloaded diff (GitHub metadata snippets
+can have different context). It retains
+hashes, ranges, statuses, and AST-derived summaries, then deletes the downloaded
+patch, including on exceptions. No full or per-file raw patch is retained.
+
+A diff alone cannot describe unchanged callers. To build the parent call graph,
+this mode also downloads pinned parent and target production Python blobs via
+the Git trees/blobs API, verifying blob hashes. Source is processed in memory
+and never saved as a checkout. There is no Git clone and no local Git dependency.
+Only derived `change.json`, `base_graph.json`, and `impact.json` remain. Source
+scope remains `src/mesh_harbor/`; the graph has the existing static-analysis limits.
+
+For separate debugging stages, use `github_pipeline extract --repository ...
+--target ... --output .../change.json`, followed by `github_pipeline expand
+--input .../change.json`. Expansion replays the retained derived parent graph,
+checks its identity/hash, and needs no network/token. The remote extraction JSON
+intentionally has no local patch references, since raw downloads were deleted.
+Use the remote expansion command, not local patch-validation mode, for these
+artifacts. Local patch-retention mode remains explicitly separate.
+
+Fine-grained tokens need access to the repository and Contents: read. Classic
+tokens need private-repository access when the repository is private. Unsupported
+merge/root commits, truncated trees, oversized API responses, missing files in the downloaded diff, and incomplete file pagination fail explicitly. Errors do not print
+credentials. Live target-repository verification succeeds with the updated token.
+The remote cleanup and analysis flow is also covered by simulated API tests.
